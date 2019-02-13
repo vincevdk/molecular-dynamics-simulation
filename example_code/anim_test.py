@@ -14,5 +14,6 @@ vel = np.random.rand(N, 3) - 0.5
 for t in range(1, Nt):
     pos[t] = (pos[t-1] + 0.2 * vel) % L
 
+#def kinetic_energy()
 anim = make_3d_animation(L, pos, delay=30, rotate_on_play=0)
 plt.show()
