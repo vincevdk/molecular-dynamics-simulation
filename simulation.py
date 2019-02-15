@@ -29,14 +29,20 @@ def calculate_time_evolution(Nt, N_particle, vel, pos, dis):
     
     for v in range(1,Nt):        
         # velocity = vel[t-1] + 1/m * h * F[t-1]
-        vel[v,:,:] = vel[v-1,:,:]+(1/m)*(1/Nt)#*F[v,i,:]
-
-        
+        vel[v,:,:] = vel[v-1,:,:]+(1/m)*(1/Nt)#*F[v,i,:]        
         pos[v] = (pos[v-1]+(1/Nt)*vel[v-1]) % L
 
         # distance = squareroot((dx)^2 + (dy)^2 + (dz)^2) 
         dis[v] = sum(pos[v,0,:] - pos[v,1,:])
     return(vel,pos,dis)
+
+def calculate_kinetic_energy(n_timesteps, vel):
+    # for each particle the kinetic energy is:
+    # E_{kin} = 0.5 m (v_x^2 + v_y^2 + v_z^2)
+    # the total kinetic energy is the sum of all particles
+    kinetic_energy = 0.5 * m * (np.sum(vel[:,0,:]**2, axis=1) + np.sum(vel[:,1,:]**2, axis=1))
+    print(kinetic_energy)
+    return(kinetic_energy)
 
 
 if __name__ == "__main__":    
@@ -47,10 +53,16 @@ if __name__ == "__main__":
     vel,pos,dis,F = build_matrices(Nt, N_particle)
     vel,pos = initial_state(N_particle,vel,pos)
     vel,pos,dis = calculate_time_evolution(Nt, N_particle, vel, pos, dis)    
+    kin_energy = calculate_kinetic_energy(Nt,vel)
     
     anim = make_3d_animation(L, pos, delay=30, rotate_on_play=0)
+
     plt.figure()
-    plt.plot(time,pos[:,0,0]) 
+    # plots the x-cordinate of particle 0 
+    plt.plot(time,pos[:,0,0])
+ 
+    plt.figure()
+    plt.plot(time,kin_energy)
 
     plt.show()
 
