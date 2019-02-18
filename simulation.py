@@ -1,3 +1,4 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -22,17 +23,19 @@ def initial_state(N_particles, vel,pos):
     pos[0] = np.random.rand(N_particles, dim) * L
     return(vel,pos)
 
-
 def calculate_time_evolution(Nt, N_particle, vel, pos, dis, F):
 
     # distance = squareroot((dx)^2 + (dy)^2 + (dz)^2)
-    dis[0] = (sum((pos[0,0,:] - pos[0,1,:])**2))**0.5 
+    #dis[0] = (sum((pos[0,0,:] - pos[0,1,:])**2))**0.5 
+#    if dis[0] > L/2:
+    n = np.array([[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]])
 
-    
     direction = np.zeros((N_particle, dim))
-    direction[0,:] = -(pos[0,0,:] - pos[0,1,:])
+    n = np.array
+    direction[0,:] = - (pos[0,0,:] - pos[0,1,:])
+    
     # minus sign for attractive forces                                       
-    direction[1,:] = -(pos[0,1,:] - pos[0,0,:])
+    #direction[1,:] = -(pos[0,1,:] - pos[0,0,:])
 
     F[0,0] = 3 * direction[0,:]
     F[0,1] = 3 * direction[1,:]
