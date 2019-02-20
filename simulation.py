@@ -17,11 +17,18 @@ def build_matrices(n_timesteps, n_particles):
     dis = np.zeros(Nt)
     return(vel,pos,F,dis)
 
+def initial_state(N_particles, dim, temperature,kb, L):#last update coen
+    
+    energy=  -np.log(np.random.rand(N_particles,dim))*kb*temperature#inverting the probability function  to energy
+    posneg=np.random.randint(2, size=(N_particles,dim))*2-1 #random number generator 1 or -1
+    vel=(2*energy/m)**.5*posneg #obtaining the velocity from the energy 
 
-def initial_state(N_particles, vel,pos):
-    #vel[0] = np.random.rand(N_particles, dim) * L
-    pos[0] = np.random.rand(N_particles, dim) * L
+    pos = np.random.rand(N_particles, dim) * L # generating the positions
+    
     return(vel,pos)
+
+[vel,pos]=initial_state(N_particles, dim, temperature,kb, L)
+
 
 def calculate_time_evolution(Nt, N_particle, vel, pos, dis, F):
 
