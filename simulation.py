@@ -40,28 +40,25 @@ def initial_state(N_particles, vel, pos, potential_energy):
 
 
 def calculate_minimal_distance_and_direction(N_particle, pos_at_t):
-        
-    min_dir = np.array(((pos_at_t[0,:] - pos_at_t[1,:] + L/2) % L - L/2,
-                        (pos_at_t[1,:] - pos_at_t[0,:] + L/2) % L - L/2))
-
-    min_dis = np.array((np.sqrt(np.sum((min_dir[0]**2), axis = 0)), 
-                        np.sqrt(np.sum((min_dir[1]**2), axis = 0))))
-
+ 
+    min_dir = np.array(((pos_at_t - np.flip(pos_at_t, axis = 0) + L/2) % L - L/2))        
+    min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis = 1)))) 
     return(min_dis, min_dir)
 
 
 def calculate_potential_energy(N_particle,  pos_at_t, min_dis, min_dir):
 
-    # dimensionless potential energy
+    # dimensionless potential energy given in lecture notes
     potential_energy_at_t = 4*((min_dis)**12  - (min_dis)**6)
-
     return(potential_energy_at_t)
+
 
 def calculate_force(min_dir_at_t, min_dis_at_t):
     # dimensionless force (equation 8.22 in chapter 8 molecular dynamics)
     F = np.array((min_dir_at_t[0]*(48*(min_dis_at_t[0])**-14)-24*(min_dis_at_t[0])**-8, min_dir_at_t[1]*(48*(min_dis_at_t[1])**-14)-24*(min_dis_at_t[1])**-8))
     return(F)
     
+
 def calculate_time_evolution(Nt, N_particle, vel, pos, pot_energy, force):
     
     for v in range(1,Nt):        
