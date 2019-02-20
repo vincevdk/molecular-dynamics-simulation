@@ -34,12 +34,15 @@ def initial_state(N_particles, vel, pos):
 def calculate_minimal_distance_and_direction(N_particle, pos_at_t):
     min_dir = np.zeros([N_particle, dim])
     min_dis = np.zeros([N_particle,dim])
-
+    
+    # for particle 0
     min_dir[0] = (pos_at_t[0,:] - pos_at_t[1,:] + L/2) % L - L/2
+    
+    # for particle 1
     min_dir[1] = (pos_at_t[1,:] - pos_at_t[0,:] + L/2) % L - L/2
 
-    min_dis[0] = np.sqrt(min_dir[0]**2)
-    min_dis[1] = np.sqrt(min_dir[0]**2)
+    min_dis[0] = np.sqrt(np.sum((min_dir[0]**2), axis = 0))
+    min_dis[1] = np.sqrt(np.sum((min_dir[1]**2), axis = 0))
     return(min_dis, min_dir)
 
 
