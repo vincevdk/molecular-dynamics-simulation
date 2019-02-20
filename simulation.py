@@ -15,12 +15,11 @@ N_particle = 2
 def build_matrices(n_timesteps, n_particles):
     vel = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
     pos = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
-    F = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
-    dis = np.zeros(Nt)
-    return(vel,pos,F,dis)
+    potential_energy = np.zeros(shape=(Nt, N_particle, dim), dtype = float)
+    return(vel,pos,potential_energy)
 
 
-def initial_state(N_particles, vel, pos):    
+def initial_state(N_particles, vel, pos, potential_energy):    
     energy =  -np.log(np.random.rand(N_particles,dim))*kb*temperature
     #inverting the probability function  to energy
 
@@ -29,37 +28,44 @@ def initial_state(N_particles, vel, pos):
 
     vel[0] = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
     pos[0] = np.random.rand(N_particles, dim) * L # generating the positions  
-    return(vel,pos)
+     
+    potential_energy[0] = calculate_potential_energy(N_particles, pos[0])
+    return(vel,pos, potential_energy)
+
 
 def calculate_minimal_distance_and_direction(N_particle, pos_at_t):
-    min_dir = np.zeros([N_particle, dim])
-    min_dis = np.zeros([N_particle,dim])
-    
-    # for particle 0
-    min_dir[0] = (pos_at_t[0,:] - pos_at_t[1,:] + L/2) % L - L/2
-    
-    # for particle 1
-    min_dir[1] = (pos_at_t[1,:] - pos_at_t[0,:] + L/2) % L - L/2
+        
+    min_dir = np.array(((pos_at_t[0,:] - pos_at_t[1,:] + L/2) % L - L/2,
+                        (pos_at_t[1,:] - pos_at_t[0,:] + L/2) % L - L/2))
 
-    min_dis[0] = np.sqrt(np.sum((min_dir[0]**2), axis = 0))
-    min_dis[1] = np.sqrt(np.sum((min_dir[1]**2), axis = 0))
+    min_dis = np.array((np.sqrt(np.sum((min_dir[0]**2), axis = 0)), 
+                        np.sqrt(np.sum((min_dir[1]**2), axis = 0))))
+
     return(min_dis, min_dir)
 
 
-def calculate_time_evolution(Nt, N_particle, vel, pos, dis, F):
-    direction = np.zeros((N_particle, dim))
-    n = np.array
-        
-    (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[0])
+def calculate_potential_energy(N_particle,  pos_at_t):
+
+    min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle, pos_at_t)
+
+    # dimensionless potential energy
+    potential_energy_at_t = 4*((min_dir)**12  - (min_dir)**6)
+
+    return(potential_energy_at_t)
+
+
+def calculate_time_evolution(Nt, N_particle, vel, pos, pot_energy ):
     
     for v in range(1,Nt):        
         pos[v] = (pos[v-1]+(1/Nt)*vel[v-1]) % L
-
+        
         # velocity = vel[t-1] + 1/m * h * F[t-1]  p
         vel[v,:,:] = vel[v-1,:,:]+(1/m)*(1/Nt) #*F[v-1,:,:]
-        (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[0])
+        (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[v])
 
-    return(vel,pos,dis)
+        pot_energy[v] = calculate_potential_energy(N_particle, pos[v])
+    return(vel,pos, pot_energy)
+
 
 def calculate_kinetic_energy(n_timesteps, vel):
     # for each particle the kinetic energy is:
@@ -69,14 +75,15 @@ def calculate_kinetic_energy(n_timesteps, vel):
     print(kinetic_energy)
     return(kinetic_energy)
 
+
 if __name__ == "__main__":    
     N_particle = 2
     Nt = 2000 # number of timesteps  
     time = np.linspace(1,Nt,Nt)
 
-    vel,pos,F,dis = build_matrices(Nt, N_particle)
-    vel,pos = initial_state(N_particle, vel, pos)
-    vel,pos,dis = calculate_time_evolution(Nt, N_particle, vel, pos, dis,F)    
+    vel,pos, pot_energy = build_matrices(Nt, N_particle)
+    vel,pos, pot_energy = initial_state(N_particle, vel, pos, pot_energy)
+    vel,pos, pot_energy = calculate_time_evolution(Nt, N_particle, vel, pos, pot_energy)    
     kin_energy = calculate_kinetic_energy(Nt,vel)
     
     anim = make_3d_animation(L, pos, delay=30, rotate_on_play=0)
@@ -85,11 +92,6 @@ if __name__ == "__main__":
     # plots the x-cordinate of particle 0 
     plt.plot(time,pos[:,0,0])
     plt.title('x-coordinate of particle 0')
-
-    # plots the distance between the particles
-    plt.figure()
-    plt.plot(time,dis)
-    plt.title('distance between the particles')
 
     plt.figure()
     plt.plot(time,kin_energy)
