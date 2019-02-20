@@ -28,9 +28,16 @@ def initial_state(N_particles, vel, pos, potential_energy):
 
     vel[0] = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
     pos[0] = np.random.rand(N_particles, dim) * L # generating the positions  
-     
-    potential_energy[0] = calculate_potential_energy(N_particles, pos[0])
-    return(vel,pos, potential_energy)
+
+    min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,
+                                                                pos[0])
+    potential_energy[0] = calculate_potential_energy(N_particles, 
+                                                     pos[0],
+                                                     min_dis, 
+                                                     min_dir)
+
+    force = calculate_force(min_dir, min_dis)
+    return(vel,pos, potential_energy, force)
 
 
 def calculate_minimal_distance_and_direction(N_particle, pos_at_t):
@@ -44,26 +51,36 @@ def calculate_minimal_distance_and_direction(N_particle, pos_at_t):
     return(min_dis, min_dir)
 
 
-def calculate_potential_energy(N_particle,  pos_at_t):
+def calculate_potential_energy(N_particle,  pos_at_t, min_dis, min_dir):
 
-    min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle, pos_at_t)
 
     # dimensionless potential energy
     potential_energy_at_t = 4*((min_dis)**12  - (min_dis)**6)
 
     return(potential_energy_at_t)
 
-#def calculate_force(potential
-def calculate_time_evolution(Nt, N_particle, vel, pos, pot_energy ):
+def calculate_force(min_dir_at_t, min_dis_at_t):
+    # dimensionless force (equation 8.22 in chapter 8 molecular dynamics)
+    F = np.array((min_dir_at_t[0]*(48*(min_dis_at_t[0])**-14)-24*(min_dis_at_t[0])**-8, min_dir_at_t[1]*(48*(min_dis_at_t[1])**-14)-24*(min_dis_at_t[1])**-8))
+    print(F)
+    return(F)
+    
+def calculate_time_evolution(Nt, N_particle, vel, pos, pot_energy, force):
     
     for v in range(1,Nt):        
         pos[v] = (pos[v-1]+(1/Nt)*vel[v-1]) % L
         
         # velocity = vel[t-1] + 1/m * h * F[t-1]  p
-        vel[v,:,:] = vel[v-1,:,:]+(1/m)*(1/Nt) #*F[v-1,:,:]
+        vel[v,:,:] = vel[v-1,:,:]+(1/m)*(1/Nt) * force
         (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[v])
 
-        pot_energy[v] = calculate_potential_energy(N_particle, pos[v])
+        min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,
+                                                                pos[v])
+        pot_energy[v] = calculate_potential_energy(N_particle,
+                                                         pos[v],
+                                                         min_dis,
+                                                         min_dir)
+        force = calculate_force(min_dir, min_dis)
     return(vel,pos, pot_energy)
 
 
@@ -82,8 +99,8 @@ if __name__ == "__main__":
     time = np.linspace(1,Nt,Nt)
 
     vel,pos, pot_energy = build_matrices(Nt, N_particle)
-    vel,pos, pot_energy = initial_state(N_particle, vel, pos, pot_energy)
-    vel,pos, pot_energy = calculate_time_evolution(Nt, N_particle, vel, pos, pot_energy)    
+    vel, pos, pot_energy, force = initial_state(N_particle, vel, pos, pot_energy)
+    vel,pos, pot_energy = calculate_time_evolution(Nt, N_particle, vel, pos, pot_energy,force)    
     kin_energy = calculate_kinetic_energy(Nt,vel)
     
     anim = make_3d_animation(L, pos, delay=30, rotate_on_play=0)
