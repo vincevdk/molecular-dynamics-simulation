@@ -8,7 +8,9 @@ from anim import make_3d_animation
 dim = 3
 L = 10 # length of box
 m = 1 # mass of particles
-
+kb = 10
+temperature = 2
+N_particle = 2
 
 def build_matrices(n_timesteps, n_particles):
     vel = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
@@ -17,59 +19,44 @@ def build_matrices(n_timesteps, n_particles):
     dis = np.zeros(Nt)
     return(vel,pos,F,dis)
 
-def initial_state(N_particles, dim, temperature,kb, L):#last update coen
-    
-    energy=  -np.log(np.random.rand(N_particles,dim))*kb*temperature#inverting the probability function  to energy
-    posneg=np.random.randint(2, size=(N_particles,dim))*2-1 #random number generator 1 or -1
-    vel=(2*energy/m)**.5*posneg #obtaining the velocity from the energy 
 
-    pos = np.random.rand(N_particles, dim) * L # generating the positions
-    
+def initial_state(N_particles, vel, pos):    
+    energy =  -np.log(np.random.rand(N_particles,dim))*kb*temperature
+    #inverting the probability function  to energy
+
+    posneg = np.random.randint(2, size=(N_particles,dim))*2-1 
+    #random number generator 1 or -1
+
+    vel[0] = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
+    pos[0] = np.random.rand(N_particles, dim) * L # generating the positions  
     return(vel,pos)
 
-[vel,pos]=initial_state(N_particles, dim, temperature,kb, L)
+def calculate_minimal_distance_and_direction(N_particle, pos_at_t):
+    min_dir = np.zeros([N_particle, dim])
+    min_dis = np.zeros([N_particle,dim])
+
+    min_dir[0] = (pos_at_t[0,:] - pos_at_t[1,:] + L/2) % L - L/2
+    min_dir[1] = (pos_at_t[1,:] - pos_at_t[0,:] + L/2) % L - L/2
+
+    min_dis[0] = np.sqrt(min_dir[0]**2)
+    min_dis[1] = np.sqrt(min_dir[0]**2)
+    return(min_dis, min_dir)
 
 
 def calculate_time_evolution(Nt, N_particle, vel, pos, dis, F):
-
-    # distance = squareroot((dx)^2 + (dy)^2 + (dz)^2)
-    #dis[0] = (sum((pos[0,0,:] - pos[0,1,:])**2))**0.5 
-#    if dis[0] > L/2:
-    n = np.array([[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]])
-
     direction = np.zeros((N_particle, dim))
     n = np.array
-    direction[0,:] = - (pos[0,0,:] - pos[0,1,:])
+        
+    (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[0])
     
-    # minus sign for attractive forces                                       
-    #direction[1,:] = -(pos[0,1,:] - pos[0,0,:])
-
-    F[0,0] = 3 * direction[0,:]
-    F[0,1] = 3 * direction[1,:]
-    print(F)
-
     for v in range(1,Nt):        
         pos[v] = (pos[v-1]+(1/Nt)*vel[v-1]) % L
 
         # velocity = vel[t-1] + 1/m * h * F[t-1]  p
-        vel[v,:,:] = vel[v-1,:,:]+(1/m)*(1/Nt)*F[v-1,:,:]
-
-        # direction of the line drawn between particles along which the force 
-        # acts. For each particle a seperate direction vector is calculated.
-        # the direction vector is not saved for different timesteps. 
-        direction[0,:] = -(pos[v-1,0,:] - pos[v-1,1,:]) 
-        # minus sign for attractive forces
-        direction[1,:] = -(pos[v-1,1,:] - pos[v-1,0,:])
-
-        # force along the line between particles
-        F[v,0] = 3 * direction[0,:]
-        F[v,1] = 3 * direction[1,:]
-
-        # distance = squareroot((dx)^2 + (dy)^2 + (dz)^2) 
-        dis[v] = (sum((pos[v,0,:] - pos[v,1,:])**2))**0.5
+        vel[v,:,:] = vel[v-1,:,:]+(1/m)*(1/Nt) #*F[v-1,:,:]
+        (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[0])
 
     return(vel,pos,dis)
-
 
 def calculate_kinetic_energy(n_timesteps, vel):
     # for each particle the kinetic energy is:
@@ -79,14 +66,13 @@ def calculate_kinetic_energy(n_timesteps, vel):
     print(kinetic_energy)
     return(kinetic_energy)
 
-
 if __name__ == "__main__":    
     N_particle = 2
     Nt = 2000 # number of timesteps  
     time = np.linspace(1,Nt,Nt)
 
     vel,pos,F,dis = build_matrices(Nt, N_particle)
-    vel,pos = initial_state(N_particle,vel,pos)
+    vel,pos = initial_state(N_particle, vel, pos)
     vel,pos,dis = calculate_time_evolution(Nt, N_particle, vel, pos, dis,F)    
     kin_energy = calculate_kinetic_energy(Nt,vel)
     
