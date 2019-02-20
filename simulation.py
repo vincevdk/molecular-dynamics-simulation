@@ -15,7 +15,7 @@ N_particle = 2
 def build_matrices(n_timesteps, n_particles):
     vel = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
     pos = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
-    potential_energy = np.zeros(shape=(Nt, N_particle, dim), dtype = float)
+    potential_energy = np.zeros(shape=(Nt, N_particle), dtype = float)
     return(vel,pos,potential_energy)
 
 
@@ -49,11 +49,11 @@ def calculate_potential_energy(N_particle,  pos_at_t):
     min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle, pos_at_t)
 
     # dimensionless potential energy
-    potential_energy_at_t = 4*((min_dir)**12  - (min_dir)**6)
+    potential_energy_at_t = 4*((min_dis)**12  - (min_dis)**6)
 
     return(potential_energy_at_t)
 
-
+#def calculate_force(potential
 def calculate_time_evolution(Nt, N_particle, vel, pos, pot_energy ):
     
     for v in range(1,Nt):        
