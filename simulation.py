@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -53,7 +52,6 @@ def calculate_minimal_distance_and_direction(N_particle, pos_at_t):
 
 def calculate_potential_energy(N_particle,  pos_at_t, min_dis, min_dir):
 
-
     # dimensionless potential energy
     potential_energy_at_t = 4*((min_dis)**12  - (min_dis)**6)
 
@@ -62,7 +60,6 @@ def calculate_potential_energy(N_particle,  pos_at_t, min_dis, min_dir):
 def calculate_force(min_dir_at_t, min_dis_at_t):
     # dimensionless force (equation 8.22 in chapter 8 molecular dynamics)
     F = np.array((min_dir_at_t[0]*(48*(min_dis_at_t[0])**-14)-24*(min_dis_at_t[0])**-8, min_dir_at_t[1]*(48*(min_dis_at_t[1])**-14)-24*(min_dis_at_t[1])**-8))
-    print(F)
     return(F)
     
 def calculate_time_evolution(Nt, N_particle, vel, pos, pot_energy, force):
