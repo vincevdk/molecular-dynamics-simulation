@@ -11,6 +11,9 @@ m = 1 # mass of particles
 kb = 10
 temperature = 2
 N_particle = 2
+sigma=3.405*10**-10
+kb=1.38*10**-23 #m2 kg s-2 K-1
+epsilon=119.8*kb
 
 def build_matrices(n_timesteps, n_particles):
     vel = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
@@ -18,6 +21,24 @@ def build_matrices(n_timesteps, n_particles):
     potential_energy = np.zeros(shape=(Nt, N_particle), dtype = float)
     return(vel,pos,potential_energy)
 
+
+def scaling_to_no_dim(time,vel,energy,L,epsilon,sigma,m):# iniitalize the unitless variables, which are defined at the start of the code
+    #force= force*sigma*m/epsilon # this one does not have to be defined as the force is not a predefined variable
+    time=time/(m*sigma**2/epsilon)**.5
+    L=L/sigma
+    vel=vel*np.sqrt(epsilon/m) #scale velocity see notes coen
+    energy=energy*m/epsilon
+    
+    return(vel, energy,L,time)
+
+def scaling_back(time,vel,energy,L,epsilon,sigma,m):
+    force= force*sigma*m/epsilon # this one has to be done as to obtain the correct force in units at the end of the programm
+    time=time*((m*sigma**2/epsilon)**.5)
+    L=L*sigma
+    vel=vel/(np.sqrt(epsilon/m)) #scale velocity see notes coen
+    energy=energy/(m/epsilon)
+    
+    return(vel, energy,L,time,force)
 
 def initial_state(N_particles, vel, pos, potential_energy):    
     energy =  -np.log(np.random.rand(N_particles,dim))*kb*temperature
