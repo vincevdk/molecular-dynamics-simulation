@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.ma as ma
 import matplotlib.pyplot as plt
 
 from scipy import spatial
@@ -10,10 +11,11 @@ L = 10 # length of box
 m = 1 # mass of particles
 kb = 10
 temperature = 2
-N_particle = 2
+N_particle = 4
 sigma=3.405*10**-10
 kb=1.38*10**-23 #m2 kg s-2 K-1
 epsilon=119.8*kb
+
 
 def build_matrices(n_timesteps, n_particles):
     vel = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
@@ -61,18 +63,17 @@ def initial_state(N_particles, vel, pos, potential_energy):
     return(vel,pos, potential_energy, force)
 
 
-def calculate_minimal_distance_and_direction(N_particle, pos_at_t):
-    print(pos_at_t)
-    x = np.tile(pos_at_t,(N_particle,N_particle-1,N_particle-1))
-    print(x,'x')
-    y = np.repeat(pos_at_t, N_particle, axis = 0)
-    z = np.reshape(y,(N_particle,N_particle,dim))
-    print(y,'y')
-    print(z,'z')
+def calculate_minimal_distance_and_direction(N_particles, pos_at_t):
+    x = np.tile(pos_at_t,(N_particles,1,1))
+    y = np.repeat(pos_at_t, N_particles, axis = 0)
+    z = np.reshape(y,(N_particles,N_particles,dim))
 
-    min_dir = np.array((x - z + L/2) % L - L/2)
-    min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis = 1))))
-    print(min_dis, 'min_dis')
+    min_dir = np.array((x-z + L/2) % L - L/2)
+
+    min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis = 2))))
+    min_dis = np.reshape(min_dis,(N_particles,N_particles,1))
+    min_dis = np.repeat(min_dis,3,axis=2)
+
     return(min_dis, min_dir)
 
 
@@ -83,8 +84,8 @@ def calculate_potential_energy(N_particle,  pos_at_t, min_dis, min_dir):
 
 
 def calculate_force(min_dir_at_t, min_dis_at_t):
-    # dimensionless force (equation 8.22 in chapter 8 molecular dynamics)
-    F = np.array((min_dir_at_t[0]*(48*(min_dis_at_t[0])**-14)-24*(min_dis_at_t[0])**-8, min_dir_at_t[1]*(48*(min_dis_at_t[1])**-14)-24*(min_dis_at_t[1])**-8))
+    # created a masked array to deal with division by zero
+    F = ma.array(min_dir_at_t*(48*ma.power(min_dis_at_t,-14))-24*ma.power(min_dis_at_t,-8))
     return(F)
     
 
