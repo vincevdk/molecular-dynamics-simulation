@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from scipy import spatial
 from anim import make_3d_animation
 
 # Physical values are defined globally
@@ -40,14 +41,21 @@ def initial_state(N_particles, vel, pos, potential_energy):
 
 
 def calculate_minimal_distance_and_direction(N_particle, pos_at_t):
- 
-    min_dir = np.array(((pos_at_t - np.flip(pos_at_t, axis = 0) + L/2) % L - L/2))        
-    min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis = 1)))) 
+    print(pos_at_t)
+    x = np.tile(pos_at_t,(N_particle,N_particle-1,N_particle-1))
+    print(x,'x')
+    y = np.repeat(pos_at_t, N_particle, axis = 0)
+    z = np.reshape(y,(N_particle,N_particle,dim))
+    print(y,'y')
+    print(z,'z')
+
+    min_dir = np.array((x - z + L/2) % L - L/2)
+    min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis = 1))))
+    print(min_dis, 'min_dis')
     return(min_dis, min_dir)
 
 
 def calculate_potential_energy(N_particle,  pos_at_t, min_dis, min_dir):
-
     # dimensionless potential energy given in lecture notes
     potential_energy_at_t = 4*((min_dis)**12  - (min_dis)**6)
     return(potential_energy_at_t)
