@@ -9,36 +9,18 @@ from settings import *
 
 
 def build_matrices(Nt, N_particle):
-    vel = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
+    vel = np.ones(shape=(Nt, N_particle, dim), dtype=float)
     pos = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
     potential_energy = np.zeros(shape=(Nt, N_particle), dtype = float)
     return(vel,pos,potential_energy)
 
 
-def scaling_to_no_dim(time,vel,energy,L,epsilon,sigma,m):
-    # initalize the unitless variables, which are defined at the start of the code
-    time=time/(m*sigma**2/epsilon)**.5
-    L=L/sigma
-    vel=vel*np.sqrt(epsilon/m) 
-    energy=energy*m/epsilon
-    return(vel, energy,L,time)
-
-def scaling_back(time,vel,energy,L,epsilon,sigma,m):
-    force= force*sigma*m/epsilon # this one has to be done as to obtain the correct force in units at the end of the programm
-    time=time*((m*sigma**2/epsilon)**.5)
-    L=L*sigma
-    vel=vel/(np.sqrt(epsilon/m)) 
-    energy=energy/(m/epsilon)
-    
-    return(vel, energy,L,time,force)
-
 def initial_state(N_particles, vel, pos, potential_energy):    
     energy =  -np.log(np.random.rand(N_particles,dim))*kb*temperature
     #inverting the probability function  to energy
-
+    energy = energy*m/epsilon
     posneg = np.random.randint(2, size=(N_particles,dim))*2-1 
     #random number generator 1 or -1
-
     vel[0] = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
     pos[0] = np.random.rand(N_particles, dim) * L # generating the positions  
 
@@ -82,7 +64,7 @@ def calculate_time_evolution(Nt, N_particle, vel, pos, force):
     for v in range(1,Nt):        
         pos[v] = (pos[v-1]+(1/Nt)*vel[v-1]) % L
         
-        vel[v,:,:] = vel[v-1,:,:]+(1/m)*(1/Nt) * force
+        vel[v,:,:] = vel[v,:,:] * (vel[v-1,:,:]+(1/m)*(1/Nt) * force)
         (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[v])
 
         min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,

@@ -8,12 +8,6 @@ import settings
 from settings import *
 
 if __name__ == "__main__":
-    # Physical values are defined globally 
-
-    N_particle = 4
-    Nt = 2000 # number of timesteps 
-    time = np.linspace(1,Nt,Nt)
-    time=time/(m*sigma**2/epsilon)**.5
 
     vel, pos, pot_energy = build_matrices(Nt, N_particle)
     vel, pos, force = initial_state(N_particle, vel, pos, pot_energy)
