@@ -1,15 +1,15 @@
+
 import numpy as np
 import numpy.ma as ma
 import matplotlib.pyplot as plt
 
 from scipy import spatial
 from anim import make_3d_animation
-from settings import *
-
+from config import *
 
 
 def build_matrices(Nt, N_particle):
-    vel = np.ones(shape=(Nt, N_particle, dim), dtype=float)
+    vel = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
     pos = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
     potential_energy = np.zeros(shape=(Nt, N_particle), dtype = float)
     return(vel,pos,potential_energy)
@@ -46,26 +46,29 @@ def calculate_minimal_distance_and_direction(N_particles, pos_at_t):
 
 def calculate_potential_energy(N_particle,  pos_at_t, min_dis, min_dir):
     # dimensionless potential energy given in lecture notes
-    potential_energy_at_t = 4*((min_dis)**12  - (min_dis)**6)
+    potential_energy_at_t = 4*((min_dis)**-12  - (min_dis)**-6)
     return(potential_energy_at_t)
 
 
 def calculate_force_matrix(min_dir_at_t, min_dis_at_t):
     # created a masked array to deal with division by zero
-    F = ma.array(min_dir_at_t*(48*ma.power(min_dis_at_t,-14))-24*ma.power(min_dis_at_t,-8))
+    F = ma.array(min_dir_at_t*(-48*ma.power(min_dis_at_t,-13))+24*ma.power(min_dis_at_t,-7))
     return(F)
+
     
 def calculate_force(min_dir_at_t, min_dis_at_t):
     force_matrix = calculate_force_matrix(min_dir_at_t, min_dis_at_t)
     total_force = (np.sum((force_matrix),axis = 1))
     return(total_force)
 
+
 def calculate_time_evolution(Nt, N_particle, vel, pos, force):
     
     for v in range(1,Nt):        
         pos[v] = (pos[v-1]+(1/Nt)*vel[v-1]) % L
         
-        vel[v,:,:] = vel[v,:,:] * (vel[v-1,:,:]+(1/m)*(1/Nt) * force)
+        vel[v,:,:] =  (vel[v-1,:,:]+(1/Nt) * force)
+        print(vel[v,:,:])
         (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[v])
 
         min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,

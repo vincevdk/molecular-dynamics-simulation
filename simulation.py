@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 
 from functions import *
 from anim import make_3d_animation
-import settings
-from settings import *
+from config import *
 
 if __name__ == "__main__":
 
