@@ -22,6 +22,7 @@ def initial_state(N_particles, vel, pos, potential_energy):
     posneg = np.random.randint(2, size=(N_particles,dim))*2-1 
     #random number generator 1 or -1
     vel[0] = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
+    print(vel[0], 'vel')
     pos[0] = np.random.rand(N_particles, dim) * L # generating the positions  
 
     min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,
