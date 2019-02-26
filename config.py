@@ -11,7 +11,7 @@ epsilon = 119.8*kb
 # Chosen settings for simulation
 dim = 3
 temperature = 230
-N_particle = 10
+N_particle = 27
 L = 10  # size of the box in units sigma
 
 # create an array "time" containing times at which we are calculating

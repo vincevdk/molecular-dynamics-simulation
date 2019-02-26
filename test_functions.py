@@ -1,5 +1,5 @@
 import numpy as np
-from simulation import calculate_minimal_distance_and_direction, calculate_force, calculate_force_matrix
+from simulation import calculate_minimal_distance_and_direction, calculate_force, calculate_force_matrix, fcc_lattice
 import pytest
 
 dim = 3
@@ -42,5 +42,10 @@ def test_calculate_total_force():
     min_dis, min_dir = calculate_minimal_distance_and_direction(particles,
                                                                 pos_at_t)
     F = calculate_force(min_dir,min_dis)
-
     print(F,'F')
+
+
+def test_fcc_latice_108_particles():
+    pos = np.zeros(shape=(108, 3), dtype=float)
+    pos = fcc_lattice(pos)
+    print(pos)

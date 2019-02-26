@@ -14,6 +14,20 @@ def build_matrices(Nt, N_particle):
     potential_energy = np.zeros(shape=(Nt, N_particle), dtype = float)
     return(vel,pos,potential_energy)
 
+def fcc_lattice(pos_at_0):
+    
+    number_of_boxes = 108/4 
+    distance_between_particles = ((L**3)/number_of_boxes)**(1/3)
+    x = np.arange(distance_between_particles/2, 10, distance_between_particles)
+    grid = np.array(np.meshgrid(x, x, x)).T.reshape(-1,3)
+
+    print(grid,'grid')
+    print(grid.shape,'shape')
+
+    pos_at_0 = grid
+
+    return(pos_at_0)
+
 
 def initial_state(N_particles, vel, pos, potential_energy):    
     energy =  -np.log(np.random.rand(N_particles,dim))*kb*temperature
@@ -22,9 +36,8 @@ def initial_state(N_particles, vel, pos, potential_energy):
     posneg = np.random.randint(2, size=(N_particles,dim))*2-1 
     #random number generator 1 or -1
     vel[0] = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
-    print(vel[0], 'vel')
-    pos[0] = np.random.rand(N_particles, dim) * L # generating the positions  
 
+    pos[0] = fcc_lattice(pos[0])
     min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,
                                                                 pos[0])
     force = calculate_force(min_dir, min_dis)
@@ -32,11 +45,11 @@ def initial_state(N_particles, vel, pos, potential_energy):
 
 
 def calculate_minimal_distance_and_direction(N_particles, pos_at_t):
-    x = np.tile(pos_at_t,(N_particles,1,1))
-    y = np.repeat(pos_at_t, N_particles, axis = 0)
-    z = np.reshape(y,(N_particles,N_particles,dim))
+    dimension_added = np.tile(pos_at_t,(N_particles,1,1))
+    transposed_matrix = np.repeat(pos_at_t, N_particles, axis = 0)
+    transposed_matrix = np.reshape(transposed_matrix, (N_particles,N_particles,dim))
 
-    min_dir = np.array((x-z + L/2) % L - L/2)
+    min_dir = np.array((dimension_added-transposed_matrix + L/2) % L - L/2)
 
     min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis = 2))))
     min_dis = np.reshape(min_dis,(N_particles,N_particles,1))
@@ -68,7 +81,6 @@ def calculate_time_evolution(Nt, N_particle, vel, pos, force):
         pos[v] = (pos[v-1]+(1/Nt)*vel[v-1]) % L
         
         vel[v,:,:] =  (vel[v-1,:,:]+(1/Nt) * force)
-        print(vel[v,:,:])
         (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[v])
 
         min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,
