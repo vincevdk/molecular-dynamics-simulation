@@ -97,8 +97,8 @@ def calculate_kinetic_energy(n_timesteps, vel):
     # for each particle the kinetic energy is:
     # E_{kin} = 0.5 m (v_x^2 + v_y^2 + v_z^2)
     # the total kinetic energy is the sum of all particles
-    kinetic_energy = 0.5 * m * (np.sum(vel[:,0,:]**2, axis=1) + np.sum(vel[:,1,:]**2, axis=1))
-    print(kinetic_energy)
+    kinetic_energy = 0.5 * m * np.sum(np.sum(vel[:,:,:]**2, axis=2),axis=1)
+    #print(kinetic_energy)
     return(kinetic_energy)
 
 
