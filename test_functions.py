@@ -47,5 +47,7 @@ def test_calculate_total_force():
 
 def test_fcc_latice_108_particles():
     pos = np.zeros(shape=(108, 3), dtype=float)
+    N_particle = 27
     pos = fcc_lattice(pos)
     print(pos)
+    

@@ -15,17 +15,18 @@ def build_matrices(Nt, N_particle):
     return(vel,pos,potential_energy)
 
 def fcc_lattice(pos_at_0):
-    
-    number_of_boxes = 108/4 
+    number_of_boxes = N_particle/4 
     distance_between_particles = ((L**3)/number_of_boxes)**(1/3)
-    x = np.arange(distance_between_particles/2, 10, distance_between_particles)
-    grid = np.array(np.meshgrid(x, x, x)).T.reshape(-1,3)
 
-    print(grid,'grid')
-    print(grid.shape,'shape')
+    # Simple cubic
+    x = np.arange(distance_between_particles/2, L, distance_between_particles)
+    pos_at_0[0:int(number_of_boxes)] = np.array(np.meshgrid(x, x, x)).T.reshape(-1,3)  
 
-    pos_at_0 = grid
-
+    # add molecules on centre of cube faces  
+    y = np.arange(distance_between_particles, 10, distance_between_particles)
+    pos_at_0[int(number_of_boxes):2*int(N_particle/4)] = np.array(np.meshgrid(x,y,y)).T.reshape(-1,3)
+    pos_at_0[2*int(N_particle/4):3*int(N_particle/4)] = np.array(np.meshgrid(y,y,x)).T.reshape(-1,3)
+    pos_at_0[3*int(N_particle/4):N_particle] = np.array(np.meshgrid(y,x,y)).T.reshape(-1,3) 
     return(pos_at_0)
 
 
@@ -48,9 +49,7 @@ def calculate_minimal_distance_and_direction(N_particles, pos_at_t):
     dimension_added = np.tile(pos_at_t,(N_particles,1,1))
     transposed_matrix = np.repeat(pos_at_t, N_particles, axis = 0)
     transposed_matrix = np.reshape(transposed_matrix, (N_particles,N_particles,dim))
-
-    min_dir = np.array((dimension_added-transposed_matrix + L/2) % L - L/2)
-
+    min_dir = np.array((dimension_added - transposed_matrix + L/2) % L - L/2)
     min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis = 2))))
     min_dis = np.reshape(min_dis,(N_particles,N_particles,1))
     min_dis = np.repeat(min_dis,3,axis=2)
@@ -65,7 +64,7 @@ def calculate_potential_energy(N_particle,  pos_at_t, min_dis, min_dir):
 
 def calculate_force_matrix(min_dir_at_t, min_dis_at_t):
     # created a masked array to deal with division by zero
-    F = ma.array(min_dir_at_t*(-48*ma.power(min_dis_at_t,-13))+24*ma.power(min_dis_at_t,-7))
+    F = ma.array(min_dir_at_t*(-48*ma.power(min_dis_at_t,-14))+24*ma.power(min_dis_at_t,-8))
     return(F)
 
     
@@ -97,8 +96,9 @@ def calculate_kinetic_energy(n_timesteps, vel):
     # for each particle the kinetic energy is:
     # E_{kin} = 0.5 m (v_x^2 + v_y^2 + v_z^2)
     # the total kinetic energy is the sum of all particles
+
     kinetic_energy = 0.5 * m * np.sum(np.sum(vel[:,:,:]**2, axis=2),axis=1)
-    #print(kinetic_energy)
+
     return(kinetic_energy)
 
 
