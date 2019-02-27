@@ -102,5 +102,7 @@ def calculate_kinetic_energy(n_timesteps, vel):
     return(kinetic_energy)
 
 
-
+def drift_velocity(vel,Nt,dim,drift):          
+    drift=np.sum(vel,axis=1)
+    return(drift)
 
