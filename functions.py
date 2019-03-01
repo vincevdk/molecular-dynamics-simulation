@@ -9,8 +9,9 @@ from config import *
 
 
 def build_matrices(Nt, N_particle):
-    vel = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
-    pos = np.zeros(shape=(Nt, N_particle, dim), dtype=float)
+    
+    vel = np.zeros(shape=(N_particle, dim), dtype=float)
+    pos = np.zeros(shape=(N_particle, dim), dtype=float)
     potential_energy = np.zeros(shape=(Nt, N_particle), dtype = float)
     return(vel,pos,potential_energy)
 
@@ -36,11 +37,11 @@ def initial_state(N_particles, vel, pos, potential_energy):
     energy = energy*m/epsilon
     posneg = np.random.randint(2, size=(N_particles,dim))*2-1 
     #random number generator 1 or -1
-    vel[0] = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
+    vel = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
 
-    pos[0] = fcc_lattice(pos[0])
+    pos = fcc_lattice(pos)
     min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,
-                                                                pos[0])
+                                                                pos)
     force = calculate_force(min_dir, min_dis)
     return(vel, pos, force)
 
@@ -77,18 +78,18 @@ def calculate_force(min_dir_at_t, min_dis_at_t):
 def calculate_time_evolution(Nt, N_particle, vel, pos, force):
     
     for v in range(1,Nt):        
-        vel[v-1] =  (vel[v-1]+(1/(Nt*2)) * force)
+        vel =  (vel+(1/(Nt*2)) * force)
         
-        pos[v] = (pos[v-1]+(1/Nt)*vel[v]) % L
+        pos = (pos + (1/Nt)*vel) % L
 
-        min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,                                                                pos[v])
+        min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,                                                                pos)
 #        pot_energy[v] = calculate_potential_energy(N_particle,
 #                                                         pos[v],
 #                                                         min_dis,
 #                                                         min_dir)
         force = calculate_force(min_dir, min_dis)
 
-        vel[v] = vel[v-1] + (1/(Nt*2)) * force
+        vel = vel + (1/(Nt*2)) * force
     return(vel,pos)
 
 def calculate_kinetic_energy(n_timesteps, vel):

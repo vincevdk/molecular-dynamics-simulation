@@ -12,20 +12,17 @@ if __name__ == "__main__":
     vel, pos, force = initial_state(N_particle, vel, pos, pot_energy)
 
     vel, pos = calculate_time_evolution(Nt, N_particle, vel, pos, force)
-    kin_energy = calculate_kinetic_energy(Nt,vel)
+#    kin_energy = calculate_kinetic_energy(Nt,vel)
 #    drift = drift_velocity(vel,Nt,dim,drift)
 
-    anim = make_3d_animation(L, pos, delay=30, rotate_on_play=0)
+#    anim = make_3d_animation(L, pos, delay=30, rotate_on_play=0)
 
-    plt.figure()
+#    plt.figure()
 
-    # plots the x-cordinate of particle 0
-    plt.plot(time,pos[:,0,0])
-    plt.title('x-coordinate of particle 0')
 
-    plt.figure()
-    plt.plot(time,kin_energy)
-    plt.title('kinetic energy of all particles')
+#    plt.figure()
+#    plt.plot(time,kin_energy)
+#    plt.title('kinetic energy of all particles')
     
  #   plt.figure()
  #   plt.plot(time,drift)
@@ -33,5 +30,5 @@ if __name__ == "__main__":
     
     
     
-    plt.show()
+#    plt.show()
     
