@@ -8,27 +8,25 @@ from config import *
 
 if __name__ == "__main__":
 
-    vel, pos, pot_energy = build_matrices(Nt, N_particle)
-    vel, pos, force = initial_state(N_particle, vel, pos, pot_energy)
+    vel, pos, pot_energy, kin_energy = build_matrices()
+    vel, pos, force, pot_energy, kin_energy= initial_state(N_particle, vel, pos, pot_energy, kin_energy)
 
-    vel, pos = calculate_time_evolution(Nt, N_particle, vel, pos, force)
-#    kin_energy = calculate_kinetic_energy(Nt,vel)
+    pot_energy, kin_energy = calculate_time_evolution(vel, pos, force, pot_energy, kin_energy)
+
 #    drift = drift_velocity(vel,Nt,dim,drift)
 
-#    anim = make_3d_animation(L, pos, delay=30, rotate_on_play=0)
+    plt.figure()
+    plt.plot(time,kin_energy)
+    plt.title('kinetic energy of all particles')
 
-#    plt.figure()
-
-
-#    plt.figure()
-#    plt.plot(time,kin_energy)
-#    plt.title('kinetic energy of all particles')
-    
+    plt.figure()
+    plt.plot(time,pot_energy)
+    plt.title('potential energy of all particles')
  #   plt.figure()
  #   plt.plot(time,drift)
  #   plt.title('momentum entire system')
     
     
     
-#    plt.show()
+    plt.show()
     
