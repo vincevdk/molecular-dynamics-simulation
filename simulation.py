@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     vel, pos = calculate_time_evolution(Nt, N_particle, vel, pos, force)
     kin_energy = calculate_kinetic_energy(Nt,vel)
-    drift = drift_velocity(vel,Nt,dim,drift)
+#    drift = drift_velocity(vel,Nt,dim,drift)
 
     anim = make_3d_animation(L, pos, delay=30, rotate_on_play=0)
 
@@ -27,9 +27,9 @@ if __name__ == "__main__":
     plt.plot(time,kin_energy)
     plt.title('kinetic energy of all particles')
     
-    plt.figure()
-    plt.plot(time,drift)
-    plt.title('momentum entire system')
+ #   plt.figure()
+ #   plt.plot(time,drift)
+ #   plt.title('momentum entire system')
     
     
     

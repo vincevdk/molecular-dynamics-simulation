@@ -10,7 +10,7 @@ epsilon = 119.8*kb
 
 # Chosen settings for simulation
 dim = 3
-temperature = 200
+temperature = 2000
 N_particle = 108
 L = 10  # size of the box in units sigma
 

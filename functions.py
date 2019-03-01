@@ -77,32 +77,28 @@ def calculate_force(min_dir_at_t, min_dis_at_t):
 def calculate_time_evolution(Nt, N_particle, vel, pos, force):
     
     for v in range(1,Nt):        
-        pos[v] = (pos[v-1]+(1/Nt)*vel[v-1]) % L
+        vel[v-1] =  (vel[v-1]+(1/(Nt*2)) * force)
         
-        vel[v,:,:] =  (vel[v-1,:,:]+(1/Nt) * force)
-        (min_dis, min_dir) = calculate_minimal_distance_and_direction(N_particle, pos[v])
+        pos[v] = (pos[v-1]+(1/Nt)*vel[v]) % L
 
-        min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,
-                                                                pos[v])
+        min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,                                                                pos[v])
 #        pot_energy[v] = calculate_potential_energy(N_particle,
 #                                                         pos[v],
 #                                                         min_dis,
 #                                                         min_dir)
         force = calculate_force(min_dir, min_dis)
-    return(vel,pos)
 
+        vel[v] = vel[v-1] + (1/(Nt*2)) * force
+    return(vel,pos)
 
 def calculate_kinetic_energy(n_timesteps, vel):
     # for each particle the kinetic energy is:
     # E_{kin} = 0.5 m (v_x^2 + v_y^2 + v_z^2)
     # the total kinetic energy is the sum of all particles
-
-    kinetic_energy = 0.5 * m * np.sum(np.sum(vel[:,:,:]**2, axis=2),axis=1)
-
+    kinetic_energy = 0.5 * m * (np.sum(vel[:,0,:]**2, axis=1) + np.sum(vel[:,1,:]**2, axis=1))
+#    print(kinetic_energy)
     return(kinetic_energy)
 
 
-def drift_velocity(vel,Nt,dim,drift):          
-    drift=np.sum(vel,axis=1)
-    return(drift)
+
 
