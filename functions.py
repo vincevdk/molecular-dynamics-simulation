@@ -8,7 +8,21 @@ from config import *
 
 
 def build_matrices():
-    
+    """Create the matrices used throughout the calculations.
+
+    Results:
+    --------
+    vel: array of size (N_particle, 3)
+       The velocity of N particles in 3 dimensions. The first index of the 
+       array corresponds to a particle.      
+    pos: array of size (N_particle, 3)
+       The positon of N particles in 3 dimensions. The first index of the array
+       corresponds to a particle.   
+    potential_energy: array of size Nt
+       The potential energy of all particles at each timestep.
+    kinetic_energy: array of size Nt                                          
+       The kintetic_energy of all particles at each timestep.  
+    """
     vel = np.zeros(shape=(N_particle, dim), dtype=float)
     pos = np.zeros(shape=(N_particle, dim), dtype=float)
     potential_energy = np.zeros(Nt, dtype = float)
@@ -16,6 +30,25 @@ def build_matrices():
     return(vel,pos,potential_energy, kinetic_energy)
 
 def fcc_lattice(pos_at_0):
+    """Position all particles on a fcc lattice. First the number of unit cell
+    is calculated which is used to calculate the distance between particles on 
+    simple cubic lattice. Then particles are placed on a simple cubic lattice.
+    Then using a shift the particles on the center of the cubic faces are 
+    added.
+
+    Parameters:
+    -----------
+    pos_at_0: array of size (N_paticle, 3)
+        The positon of N particles in 3 dimensions. The first index of the 
+        array corresponds to a particle. 
+
+    Results:
+    --------
+    pos_at_0: array of size (N_paticle, 3)             
+        The positon of N particles in 3 dimensions. The first index of the
+        array corresponds to a particle.    
+    """
+
     number_of_boxes = N_particle/4 
     distance_between_particles = ((L**3)/number_of_boxes)**(1/3)
 
@@ -31,11 +64,45 @@ def fcc_lattice(pos_at_0):
     return(pos_at_0)
 
 
-def initial_state(N_particles, vel, pos,  potential_energy, kinetic_energy):    
-    energy =  -np.log(np.random.rand(N_particles,dim))*kb*temperature
+def initial_state(vel, pos,  pot_energy_t0, kin_energy_t0):
+    """ Puts the system in an initial state.
+    The velocities of the particles is calculated using the canonical 
+    distribution. The position of the particles is initialized on a fcc 
+    lattice. 
+    Parameters:
+    -----------
+    vel: array of size (N_particle, 3)  
+      The velocity of N particles in 3 dimensions. The first index of the 
+      array corresponds to a particle.                                         
+    pos: array of size (N_particle, 3) 
+       The positon of N particles in 3 dimensions. The first index of the array
+       corresponds to a particle.            
+    pot_energy_t0: float
+       The total potential energy at t = 0.
+    kin_energy_t0: float
+       The total kintetic energy at t = 0.
+
+    Results:
+    --------
+    vel: array of size (N_particle, 3)
+      The velocity of N particles in 3 dimensions. The first index of the 
+      array corresponds to a particle.                                         
+    pos: array of size (N_particle, 3) 
+      The positon of N particles in 3 dimensions. The first index of the array       corresponds to a particle.                                               
+    force: array of size (N_particle, N_particle)
+    
+    pot_energy_t0: float                                                     
+       The total potential energy at t = 0.          
+    kin_energy_t0: float                                                       
+       The total kintetic energy at t = 0.                                     
+                                                
+    """
+
+
+    energy =  -np.log(np.random.rand(N_particle,dim))*kb*temperature
     #inverting the probability function  to energy
     energy = energy*m/epsilon
-    posneg = np.random.randint(2, size=(N_particles,dim))*2-1 
+    posneg = np.random.randint(2, size=(N_particle,dim))*2-1 
     #random number generator 1 or -1
     vel = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
 
@@ -44,10 +111,10 @@ def initial_state(N_particles, vel, pos,  potential_energy, kinetic_energy):
                                                                 pos)
     force = calculate_force(min_dir, min_dis)
 
-    potential_energy[0] = calculate_potential_energy(pos, min_dis,min_dir, potential_energy[0])
+    pot_energy_t0 = calculate_potential_energy(pos, min_dis,min_dir, pot_energy_t0)
 
-    kinetic_energy[0] = calculate_kinetic_energy(kinetic_energy[0], vel)
-    return(vel, pos, force, potential_energy, kinetic_energy)
+    kin_energy_t0 = calculate_kinetic_energy(kin_energy_t0, vel)
+    return(vel, pos, force, pot_energy_t0, kin_energy_t0)
 
 
 def calculate_minimal_distance_and_direction(N_particles, pos_at_t):

@@ -9,7 +9,7 @@ from config import *
 if __name__ == "__main__":
 
     vel, pos, pot_energy, kin_energy = build_matrices()
-    vel, pos, force, pot_energy, kin_energy= initial_state(N_particle, vel, pos, pot_energy, kin_energy)
+    vel, pos, force, pot_energy[0], kin_energy[0] = initial_state(vel, pos, pot_energy[0], kin_energy[0])
 
     pot_energy, kin_energy = calculate_time_evolution(vel, pos, force, pot_energy, kin_energy)
 
