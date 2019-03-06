@@ -97,15 +97,12 @@ def initial_state(vel, pos,  pot_energy_t0, kin_energy_t0):
        The total kintetic energy at t = 0.                                     
                                                 
     """
-
-
     energy =  -np.log(np.random.rand(N_particle,dim))*kb*temperature
     #inverting the probability function  to energy
     energy = energy*m/epsilon
     posneg = np.random.randint(2, size=(N_particle,dim))*2-1 
     #random number generator 1 or -1
     vel = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
-
     pos = fcc_lattice(pos)
     min_dis, min_dir = calculate_minimal_distance_and_direction(N_particle,
                                                                 pos)
@@ -159,11 +156,12 @@ def calculate_time_evolution(vel, pos, force, potential_energy,kinetic_energy):
         kinetic_energy[v] = calculate_kinetic_energy(kinetic_energy[v], vel)
     return(potential_energy,kinetic_energy)
 
+
 def calculate_kinetic_energy(kinetic_energy_at_t, vel):
     # for each particle the kinetic energy is:
     # E_{kin} = 0.5 m (v_x^2 + v_y^2 + v_z^2)
     # the total kinetic energy is the sum of all particles
-    kinetic_energy_at_t = 0.5 * m * np.sum(np.sum(vel**2, axis=1),axis=0)
+    kinetic_energy_at_t = 0.5 * np.sum(vel**2) # in units sigma
     return(kinetic_energy_at_t)
 
 

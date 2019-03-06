@@ -15,8 +15,8 @@ N_particle = 108
 L = 10  # size of the box in units sigma
 
 # create an array "time" containing times at which we are calculating
-timestep = 10*10**-14
+timestep = 10**-14
 dimensionless_timestep = timestep/(m*sigma**2/epsilon)**.5
-Nt = 2000 # number of timesteps  
-time = np.arange(0,Nt*dimensionless_timestep-0.04,dimensionless_timestep)
+Nt = 200 # number of timesteps  
+time = np.arange(0,Nt*dimensionless_timestep-0.004,dimensionless_timestep)
 
