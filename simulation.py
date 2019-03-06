@@ -14,7 +14,7 @@ if __name__ == "__main__":
     pot_energy, kin_energy = calculate_time_evolution(vel, pos, force, pot_energy, kin_energy)
     total_energy=calculate_total_energy(kin_energy,pot_energy)
 #    drift = drift_velocity(vel,Nt,dim,drift)
-
+    print(kin_energy,'kin_energy')
     plt.figure()
     
     plt.title('kinetic energy of all particles')

@@ -1,7 +1,5 @@
 import numpy as np
 
-# Physical values are defined globally
-
 # Properties of Argon atoms and physical constants
 m = 6.6 * 10**-26
 sigma = 3.405*10**-10
@@ -16,7 +14,9 @@ L = 10  # size of the box in units sigma
 
 # create an array "time" containing times at which we are calculating
 timestep = 10**-14
-dimensionless_timestep = timestep/(m*sigma**2/epsilon)**.5
-Nt = 200 # number of timesteps  
-time = np.arange(0,Nt*dimensionless_timestep-0.004,dimensionless_timestep)
-
+h = 0.0046
+#h = timestep/(m*sigma**2/epsilon)**.5 # dimensionless_timestep
+print(h)
+Nt = 2000 # number of timesteps  
+time = np.arange(0,Nt*h-0.004,h)
+print(time)

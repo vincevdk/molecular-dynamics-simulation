@@ -56,11 +56,12 @@ def fcc_lattice(pos_at_0):
     x = np.arange(distance_between_particles/2, L, distance_between_particles)
     pos_at_0[0:int(number_of_boxes)] = np.array(np.meshgrid(x, x, x)).T.reshape(-1,3)  
 
-    # add molecules on centre of cube faces  
+    # add molecules on center of cube faces  
     y = np.arange(distance_between_particles, 10, distance_between_particles)
     pos_at_0[int(number_of_boxes):2*int(N_particle/4)] = np.array(np.meshgrid(x,y,y)).T.reshape(-1,3)
     pos_at_0[2*int(N_particle/4):3*int(N_particle/4)] = np.array(np.meshgrid(y,y,x)).T.reshape(-1,3)
     pos_at_0[3*int(N_particle/4):N_particle] = np.array(np.meshgrid(y,x,y)).T.reshape(-1,3) 
+
     return(pos_at_0)
 
 
@@ -124,21 +125,27 @@ def calculate_minimal_distance_and_direction(pos_at_t):
        corresponds to a particle. 
     Results:
     --------
-    min_dis: array of size (N_particle, N_particle, 3)
+    min_dir: array of size (N_particle, N_particle, 3)
        A single matrix  entry [i,j,l] is the difference in coordinate l 
        (x,y or z) between i and j (i_l - j_l). Thus the matrix has zeros on 
        the diagonal as the distance between the particle and itself is zero.
-    min_dir: array of size (N_particle, N_particle)
+    min_dis: array of size (N_particle, N_particle)
        A single matrix entry [i,j] is the distance between particle i and j.
        An entry is calculated using the difference in coordinates from the 
        min_dis matrix with the formula: sqrt(dx^2+dy^2+dz^2).
     """
-    dimension_added = np.tile(pos_at_t,(N_particle,1,1))
-    transposed_matrix = np.repeat(pos_at_t, N_particle, axis = 0)
-    transposed_matrix = np.reshape(transposed_matrix, (N_particle,N_particle,dim))
+    threshold = 10**(-4)
+    dimension_added = np.tile(pos_at_t,(len(pos_at_t),1,1))
+    transposed_matrix = np.repeat(pos_at_t, len(pos_at_t), axis = 0)
+    transposed_matrix = np.reshape(transposed_matrix, (len(pos_at_t),len(pos_at_t),dim))
 
     min_dir = np.array((dimension_added - transposed_matrix + L/2) % L - L/2)
     min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis = 2))))
+    
+    np.fill_diagonal(min_dis,1)
+    min_dis[min_dis < threshold] = threshold
+    np.fill_diagonal(min_dis,0)
+
     return(min_dis, min_dir)
 
 
@@ -150,12 +157,14 @@ def calculate_potential_energy(pos_at_t, min_dis, min_dir, potential_energy_at_t
 
 
 def calculate_force_matrix(min_dir_at_t, min_dis_at_t):
-    """ Calculates the force for particles using the derivative of the Lennard     Jones potential. A masked array is used to deal with division by zero.
+    """ Calculates the force for particles using the derivative of the Lennard
+    Jones potential. A masked array is used to deal with division by zero.
     Parameters:
     -----------
     min_dis_at_t: array of size (N_particle, N_particle) 
        A single matrix entry [i,j] is the distance between particle i and j.
-    min_dir_at_t: array of size (N_particle, N_particle, 3)                           A single matrix  entry [i,j,l] is the difference in coordinate l       
+    min_dir_at_t: array of size (N_particle, N_particle, 3) 
+       A single matrix  entry [i,j,l] is the difference in coordinate l       
        (x,y or z) between i and j (i_l - j_l). Thus the matrix has zeros on
        the diagonal as the distance between the particle and itself is zero. 
     Results:
@@ -165,8 +174,9 @@ def calculate_force_matrix(min_dir_at_t, min_dis_at_t):
        (x,y or z) between i and j (i_l - j_l). Thus the matrix has zeros on    
        the diagonal as the distance between the particle and itself is zero. 
     """
-    F = ma.array(min_dir_at_t*(48*ma.power(min_dis_at_t,-14))-24*ma.power(min_dis_at_t,-8))
-    print(F.shape,'shape F')
+    print(min_dir_at_t)
+    F = ma.array(min_dir_at_t*((-48*ma.power(min_dis_at_t,-14))+24*ma.power(min_dis_at_t,-8)))
+    print(np.sum(F), 'should be zero')
     return(F)
 
     
@@ -183,7 +193,7 @@ def calculate_force(min_dir_at_t, min_dis_at_t):
     Results:
     --------
     total_force: array of size (N_particle,3)
-       A single matrix entry [i,j] is the force component of coordinate j on 
+       A single matrix entry [i,j] is the force component of coordinate j on
        particle i .
     """
     min_dis_at_t = np.reshape(min_dis_at_t,(len(min_dir_at_t),len(min_dir_at_t),1))
@@ -191,17 +201,18 @@ def calculate_force(min_dir_at_t, min_dis_at_t):
 
     force_matrix = calculate_force_matrix(min_dir_at_t, min_dis_at_t)
     total_force = (np.sum((force_matrix),axis = 1))    
+    print(total_force,'total_force')
+    print(np.sum(total_force),'should also be zero')
     return(total_force)
 
 
 def calculate_time_evolution(vel, pos, force, potential_energy,kinetic_energy):
-    for v in range(1,Nt):        
-        vel =  (vel+(1/(Nt*2)) * force)        
-        pos = (pos + (1/Nt)*vel) % L
+    for v in range(1,Nt):   
+        vel =  vel + h*force/2
+        pos = (pos + h*vel) % L
         min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
         force = calculate_force(min_dir, min_dis)
-        print(force,'force')
-        vel = vel + (1/(Nt*2)) * force
+        vel = vel + h*force/2
         potential_energy[v] = calculate_potential_energy(pos, min_dis,min_dir, potential_energy[v])
         kinetic_energy[v] = calculate_kinetic_energy(kinetic_energy[v], vel)
     return(potential_energy,kinetic_energy)
@@ -211,7 +222,7 @@ def calculate_kinetic_energy(kinetic_energy_at_t, vel):
     # for each particle the kinetic energy is:
     # E_{kin} = 0.5 m (v_x^2 + v_y^2 + v_z^2)
     # the total kinetic energy is the sum of all particles
-    kinetic_energy_at_t = 0.5 * np.sum(vel**2) # in units epsilon
+    kinetic_energy_at_t = 0.5*np.sum(vel[:,0]**2+vel[:,1]**2+vel[:,2]**2) 
     return(kinetic_energy_at_t)
 
 def calculate_total_energy(kin_energy,pot_energy):
