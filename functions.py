@@ -164,6 +164,9 @@ def calculate_kinetic_energy(kinetic_energy_at_t, vel):
     kinetic_energy_at_t = 0.5 * np.sum(vel**2) # in units sigma
     return(kinetic_energy_at_t)
 
+def calculate_total_energy(kin_energy,pot_energy):
+    total_energy=kin_energy+pot_energy
+    return(total_energy)
 
 
 
