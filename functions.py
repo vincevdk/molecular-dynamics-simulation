@@ -174,9 +174,8 @@ def calculate_force_matrix(min_dir_at_t, min_dis_at_t):
        (x,y or z) between i and j (i_l - j_l). Thus the matrix has zeros on    
        the diagonal as the distance between the particle and itself is zero. 
     """
-    print(min_dir_at_t)
     F = ma.array(min_dir_at_t*((-48*ma.power(min_dis_at_t,-14))+24*ma.power(min_dis_at_t,-8)))
-    print(np.sum(F), 'should be zero')
+
     return(F)
 
     
@@ -201,8 +200,6 @@ def calculate_force(min_dir_at_t, min_dis_at_t):
 
     force_matrix = calculate_force_matrix(min_dir_at_t, min_dis_at_t)
     total_force = (np.sum((force_matrix),axis = 1))    
-    print(total_force,'total_force')
-    print(np.sum(total_force),'should also be zero')
     return(total_force)
 
 

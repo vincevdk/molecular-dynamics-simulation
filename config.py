@@ -8,15 +8,15 @@ epsilon = 119.8*kb
 
 # Chosen settings for simulation
 dim = 3
-temperature = 200
+temperature = 1000
 N_particle = 108
 L = 10  # size of the box in units sigma
 
 # create an array "time" containing times at which we are calculating
 timestep = 10**-14
-h = 0.0046
+h = 0.001
 #h = timestep/(m*sigma**2/epsilon)**.5 # dimensionless_timestep
-print(h)
-Nt = 2000 # number of timesteps  
-time = np.arange(0,Nt*h-0.004,h)
-print(time)
+
+Nt = 500 # number of timesteps  
+time = np.arange(0,Nt*h-0.0001,h)
+
