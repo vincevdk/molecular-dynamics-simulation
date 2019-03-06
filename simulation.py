@@ -29,8 +29,6 @@ if __name__ == "__main__":
  #   plt.figure()
  #   plt.plot(time,drift)
  #   plt.title('momentum entire system')
-    
-    
-    
+       
     plt.show()
     
