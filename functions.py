@@ -154,7 +154,7 @@ def calculate_minimal_distance_and_direction(pos_at_t):
 def calculate_potential_energy(pos_at_t, min_dis, min_dir, potential_energy_at_t):
 
     # dimensionless potential energy given in lecture notes
-    potential_energy_at_t = np.sum(4*(ma.power(min_dis,-12)  - ma.power(min_dis,-6)))
+    potential_energy_at_t = np.sum(4*(ma.power(min_dis,-12)  - ma.power(min_dis,-6)))/2
     return(potential_energy_at_t)
 
 

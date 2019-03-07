@@ -12,7 +12,7 @@ if __name__ == "__main__":
     vel, pos, force, pot_energy[0], kin_energy[0] = initial_state(vel, pos, pot_energy[0], kin_energy[0])
 
 
-    pos,vel,temperature_evolution=redistributing_velocity(vel, pos, force)
+    pos,vel,temperature_evolution,pot_energy[0], kin_energy[0],i=redistributing_velocity(vel, pos, force,pot_energy[0], kin_energy[0])
     
     pot_energy, kin_energy = calculate_time_evolution(vel, pos, force, pot_energy, kin_energy)
     total_energy=calculate_total_energy(kin_energy,pot_energy)
@@ -35,5 +35,3 @@ if __name__ == "__main__":
  #   plt.plot(time,drift)
  #   plt.title('momentum entire system')
        
-    plt.show()
-    
