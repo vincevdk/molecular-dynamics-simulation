@@ -100,11 +100,13 @@ def initial_state(vel, pos,  pot_energy_t0, kin_energy_t0):
     """
     energy =  -np.log(np.random.rand(N_particle,dim))*kb*temperature
     #inverting the probability function  to energy
-    energy = energy*m/epsilon
+    energy = energy*m/epsilon #dimensionless
     posneg = np.random.randint(2, size=(N_particle,dim))*2-1 
 
     #random number generator 1 or -1
     vel = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
+    
+    
     pos = fcc_lattice(pos)
     min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
     force = calculate_force(min_dir, min_dis)
@@ -227,5 +229,31 @@ def calculate_total_energy(kin_energy,pot_energy):
     return(total_energy)
 
 
+
+def redistributing_velocity(vel, pos, force):
+    
+    test_temperature=np.zeros(shape=1)
+    temperature_evolution=np.zeros(shape=100)
+    i=0
+    
+    
+    while np.absolute(test_temperature-temperature)>1:
+        for v in range(500):   
+            vel =  vel + h*force/2
+            pos = (pos + h*vel) % L
+            min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
+            force = calculate_force(min_dir, min_dis)
+            vel = vel + h*force/2
+            
+        test_temperature=np.sum(vel**2)*119.8/(6*(N_particle-1))
+        temperature_evolution[i]=test_temperature   
+         
+        scaling_dimensionless=((N_particle-1)*3*temperature/(119.8*np.sum(vel**2)))*2
+        vel=scaling_dimensionless*vel
+        i+=1
+        
+        
+    return(pos,vel,temperature_evolution)
+    
 
 
