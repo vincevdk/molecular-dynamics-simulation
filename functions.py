@@ -230,15 +230,15 @@ def calculate_total_energy(kin_energy,pot_energy):
 
 
 
-def redistributing_velocity(vel, pos, force):
+def redistributing_velocity(vel, pos, force,pot_energy_t0, kin_energy_t0):
     
     test_temperature=np.zeros(shape=1)
     temperature_evolution=np.zeros(shape=100)
     i=0
     
     
-    while np.absolute(test_temperature-temperature)>1:
-        for v in range(500):   
+    while np.absolute(test_temperature-temperature)>2:
+        for v in range(100):   
             vel =  vel + h*force/2
             pos = (pos + h*vel) % L
             min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
@@ -251,9 +251,16 @@ def redistributing_velocity(vel, pos, force):
         scaling_dimensionless=((N_particle-1)*3*temperature/(119.8*np.sum(vel**2)))*2
         vel=scaling_dimensionless*vel
         i+=1
+
+    #kinetic energy and potential energy
+    min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
+    force = calculate_force(min_dir, min_dis)
+
+    pot_energy_t0 = calculate_potential_energy(pos, min_dis,min_dir, pot_energy_t0)
+
+    kin_energy_t0 = calculate_kinetic_energy(kin_energy_t0, vel)
         
         
-    return(pos,vel,temperature_evolution)
-    
+    return(pos,vel,temperature_evolution,pot_energy_t0,kin_energy_t0)
 
 
