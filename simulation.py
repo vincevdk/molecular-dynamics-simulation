@@ -31,7 +31,6 @@ if __name__ == "__main__":
     plt.ylabel('energy in units of epsilon')
     plt.grid(b=None, which='major', axis='both')
     plt.legend(loc='best')
- #   plt.figure()
- #   plt.plot(time,drift)
- #   plt.title('momentum entire system')
+    
+    plt.show
        

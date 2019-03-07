@@ -231,11 +231,46 @@ def calculate_total_energy(kin_energy,pot_energy):
 
 
 def redistributing_velocity(vel, pos, force,pot_energy_t0, kin_energy_t0):
+     """function which rescales the velocity according to the required temperature. This is
+     done by running the time evolution and checking if the temperature is correct at the end
+     afterwhich the scaling factor scales it to the required temperature untill it converges
+
+    Results:
+    --------
+    vel: array of size (N_particle, 3)
+       The velocity of N particles in 3 dimensions. The first index of the 
+       array corresponds to a particle.      
+    pos: array of size (N_particle, 3)
+       The positon of N particles in 3 dimensions. The first index of the array
+       corresponds to a particle.   
+    pot_energy_t0: array of size 1
+       The potential energy of all particles at the start.
+    kin_energy_t0: array of size 1                                          
+       The kinetic_energy of all particles at the start.  
+       "" 
+       
+       output:
+       
+    pos:array of size (N_particle, 3)
+       The positon of N particles in 3 dimensions. The first index of the array
+       corresponds to a particle.
+    vel:array of size (N_particle, 3)
+       The velocity of N particles in 3 dimensions. The first index of the 
+       array corresponds to a particle.
+    temperature_evolution: array of size (100)
+        testfunction which shows what the temperature was before rescaling
+        every loop. (not implemented in other parts of the code, except for tests)
+    pot_energy_t0:array of size 1
+       The potential energy of all particles at the start.
+    kin_energy_t0:array of size 1                                          
+       The kinetic_energy of all particles at the start. 
+       
+       
+    """
     
     test_temperature=np.zeros(shape=1)
     temperature_evolution=np.zeros(shape=100)
     i=0
-    
     
     while np.absolute(test_temperature-temperature)>2:
         for v in range(100):   
@@ -255,9 +290,7 @@ def redistributing_velocity(vel, pos, force,pot_energy_t0, kin_energy_t0):
     #kinetic energy and potential energy
     min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
     force = calculate_force(min_dir, min_dis)
-
     pot_energy_t0 = calculate_potential_energy(pos, min_dis,min_dir, pot_energy_t0)
-
     kin_energy_t0 = calculate_kinetic_energy(kin_energy_t0, vel)
         
         
