@@ -27,7 +27,9 @@ def build_matrices():
     pos = np.zeros(shape=(N_particle, dim), dtype=float)
     potential_energy = np.zeros(Nt, dtype = float)
     kinetic_energy = np.zeros(Nt, dtype = float)
-    return(vel,pos,potential_energy, kinetic_energy)
+    drift_velocity = np.zeros(shape=(Nt,3), dtype = float)
+
+    return(vel,pos,potential_energy, kinetic_energy,drift_velocity)
 
 def fcc_lattice(pos_at_0):
     """Position all particles on a fcc lattice. First the number of unit cell
@@ -205,7 +207,7 @@ def calculate_force(min_dir_at_t, min_dis_at_t):
     return(total_force)
 
 
-def calculate_time_evolution(vel, pos, force, potential_energy,kinetic_energy):
+def calculate_time_evolution(vel, pos, force, potential_energy,kinetic_energy,drift_velocity):
     for v in range(1,Nt):   
         vel =  vel + h*force/2
         pos = (pos + h*vel) % L
@@ -214,7 +216,8 @@ def calculate_time_evolution(vel, pos, force, potential_energy,kinetic_energy):
         vel = vel + h*force/2
         potential_energy[v] = calculate_potential_energy(pos, min_dis,min_dir, potential_energy[v])
         kinetic_energy[v] = calculate_kinetic_energy(kinetic_energy[v], vel)
-    return(potential_energy,kinetic_energy)
+        drift_velocity[v,:] = np.sum(vel,axis=0)
+    return(potential_energy,kinetic_energy,drift_velocity)
 
 
 def calculate_kinetic_energy(kinetic_energy_at_t, vel):
@@ -229,7 +232,7 @@ def calculate_total_energy(kin_energy,pot_energy):
     return(total_energy)
 
 
-def redistributing_velocity(vel, pos, force,pot_energy_t0, kin_energy_t0):
+def redistributing_velocity(vel, pos, force,pot_energy_t0, kin_energy_t0,drift_velocity):
      """function which rescales the velocity according to the required temperature. This is
      done by running the time evolution and checking if the temperature is correct at the end
      afterwhich the scaling factor scales it to the required temperature untill it converges
@@ -288,9 +291,10 @@ def redistributing_velocity(vel, pos, force,pot_energy_t0, kin_energy_t0):
      force = calculate_force(min_dir, min_dis)
      pot_energy_t0 = calculate_potential_energy(pos, min_dis,min_dir, pot_energy_t0)
      kin_energy_t0 = calculate_kinetic_energy(kin_energy_t0, vel)
+     drift_velocity[0,:]=np.sum(vel,axis=0)
         
         
-     return(pos,vel,temperature_evolution,pot_energy_t0,kin_energy_t0)
+     return(pos,vel,temperature_evolution,pot_energy_t0,kin_energy_t0,drift_velocity)
      
      
      

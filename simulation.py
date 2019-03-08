@@ -8,13 +8,13 @@ from config import *
 
 if __name__ == "__main__":
 
-    vel, pos, pot_energy, kin_energy = build_matrices()
+    vel, pos, pot_energy, kin_energy, drift_velocity = build_matrices()
     vel, pos, force, pot_energy[0], kin_energy[0] = initial_state(vel, pos, pot_energy[0], kin_energy[0])
 
 
-    pos,vel,temperature_evolution,pot_energy[0], kin_energy[0]=redistributing_velocity(vel, pos, force,pot_energy[0], kin_energy[0])
+    pos,vel,temperature_evolution,pot_energy[0], kin_energy[0],drift_velocity=redistributing_velocity(vel, pos, force,pot_energy[0], kin_energy[0],drift_velocity)
     
-    pot_energy, kin_energy = calculate_time_evolution(vel, pos, force, pot_energy, kin_energy)
+    pot_energy, kin_energy , drift_velocity= calculate_time_evolution(vel, pos, force, pot_energy, kin_energy,drift_velocity)
     
     
     
@@ -35,6 +35,19 @@ if __name__ == "__main__":
     plt.ylabel('energy (joule)')
     plt.grid(b=None, which='major', axis='both')
     plt.legend(loc='best')
+    
+    
+    plt.figure()
+    
+    plt.title('drift velocity gass')
+    
+    plt.plot(time,drift_velocity)
+    
+    plt.xlabel('time (s)')
+    plt.ylabel('velocity(m/s)')
+    plt.grid(b=None, which='major', axis='both')
+    
+    
     
     plt.show
        
