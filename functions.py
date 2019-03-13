@@ -28,13 +28,13 @@ def build_matrices():
     potential_energy = np.zeros(Nt, dtype = float)
     kinetic_energy = np.zeros(Nt, dtype = float)
     drift_velocity = np.zeros(shape=(Nt,3), dtype = float)
+    vir = np.zeros(Nt, dtype = float)
 
-    return(vel,pos,potential_energy, kinetic_energy,drift_velocity)
+    return(vel,pos,potential_energy, kinetic_energy,drift_velocity,vir)
 
 def fcc_lattice(pos_at_0):
     """Position all particles on a fcc lattice. First the number of unit cell
     is calculated which is used to calculate the distance between particles on 
-    simple cubic lattice. Then particles are placed on a simple cubic lattice.
     Then using a shift the particles on the center of the cubic faces are 
     added.
 
@@ -69,7 +69,7 @@ def fcc_lattice(pos_at_0):
     return(pos_at_0)
 
 
-def initial_state(vel, pos,  pot_energy_t0, kin_energy_t0):
+def initial_state(vel, pos,  pot_energy_t0, kin_energy_t0, vir):
     """ Puts the system in an initial state.
     The velocities of the particles is calculated using the canonical 
     distribution. The position of the particles is initialized on a fcc 
@@ -112,13 +112,18 @@ def initial_state(vel, pos,  pot_energy_t0, kin_energy_t0):
     
     
     pos = fcc_lattice(pos)
+    
+    
     min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
     force = calculate_force(min_dir, min_dis)
 
     pot_energy_t0 = calculate_potential_energy(pos, min_dis,min_dir, pot_energy_t0)
 
     kin_energy_t0 = calculate_kinetic_energy(kin_energy_t0, vel)
-    return(vel, pos, force, pot_energy_t0, kin_energy_t0)
+    
+    vir[0] = virial_theorem(pos)
+    
+    return(vel, pos, force, pot_energy_t0, kin_energy_t0, vir)
 
 
 def calculate_minimal_distance_and_direction(pos_at_t):
@@ -209,7 +214,7 @@ def calculate_force(min_dir_at_t, min_dis_at_t):
     return(total_force)
 
 
-def calculate_time_evolution(vel, pos, force, potential_energy,kinetic_energy,drift_velocity):
+def calculate_time_evolution(vel, pos, force, potential_energy,kinetic_energy,drift_velocity, vir):
     for v in range(1,Nt):   
         vel =  vel + h*force/2
         pos = (pos + h*vel) % L
@@ -219,7 +224,9 @@ def calculate_time_evolution(vel, pos, force, potential_energy,kinetic_energy,dr
         potential_energy[v] = calculate_potential_energy(pos, min_dis,min_dir, potential_energy[v])
         kinetic_energy[v] = calculate_kinetic_energy(kinetic_energy[v], vel)
         drift_velocity[v,:] = np.sum(vel,axis=0)
-    return(potential_energy,kinetic_energy,drift_velocity)
+        vir[v] = virial_theorem(pos)
+        
+    return(potential_energy,kinetic_energy,drift_velocity,vir)
 
 
 def calculate_kinetic_energy(kinetic_energy_at_t, vel):
@@ -296,7 +303,7 @@ def redistributing_velocity(vel, pos, force,pot_energy_t0, kin_energy_t0,drift_v
      drift_velocity[0,:]=np.sum(vel,axis=0)
         
         
-     return(pos,vel,temperature_evolution,pot_energy_t0,kin_energy_t0,drift_velocity)
+     return(pos,vel,temperature_evolution,pot_energy_t0,kin_energy_t0,drift_velocity, vir)
      
      
      
@@ -306,3 +313,18 @@ def scaling_to_correct_dimensions(time,kin_energy,pot_energy):
     pot_energy=pot_energy*(m/epsilon)
     
     return(time,kin_energy,pot_energy)
+
+def virial_theorem(pos_at_t):
+    min_dis, min_dir = calculate_minimal_distance_and_direction(pos_at_t)
+    vir = ma.array(min_dis**2 * ((-48*ma.power(min_dis,-14))+24*ma.power(min_dis,-8)))
+    vir = np.sum(vir)
+   
+    return(vir)
+    
+def calculate_pressure(vir):
+    p = N_particle*kb*temperature/(L*L)-(1/3)*0.5*vir
+    
+    return(p)
+    
+
+    
