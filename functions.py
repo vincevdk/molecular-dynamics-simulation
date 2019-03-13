@@ -53,15 +53,13 @@ def fcc_lattice(pos_at_0):
     N_particle = len(pos_at_0)
     number_of_boxes = N_particle/4 
     distance_between_particles = ((L**3)/number_of_boxes)**(1/3)
-    
+
     # Simple cubic
     x = np.arange(distance_between_particles/2, L, distance_between_particles)
     pos_at_0[0:int(number_of_boxes)] = np.array(np.meshgrid(x, x, x)).T.reshape(-1,3)  
-
-
+    
     # add molecules on center of cube faces  
-    y = np.arange(distance_between_particles, 10, distance_between_particles)
-
+    y = np.arange(distance_between_particles, L+distance_between_particles/2, distance_between_particles)
     pos_at_0[int(number_of_boxes):2*int(N_particle/4)] = np.array(np.meshgrid(x,y,y)).T.reshape(-1,3)
     pos_at_0[2*int(N_particle/4):3*int(N_particle/4)] = np.array(np.meshgrid(y,y,x)).T.reshape(-1,3)
     pos_at_0[3*int(N_particle/4):N_particle] = np.array(np.meshgrid(y,x,y)).T.reshape(-1,3) 
@@ -110,9 +108,7 @@ def initial_state(vel, pos,  pot_energy_t0, kin_energy_t0, vir):
     #random number generator 1 or -1
     vel = (2*energy/m)**.5*posneg #obtaining the velocity from the energy 
     
-    
     pos = fcc_lattice(pos)
-    
     
     min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
     force = calculate_force(min_dir, min_dis)
