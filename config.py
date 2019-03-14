@@ -17,6 +17,6 @@ timestep = 10**-14
 h = 0.001
 #h = timestep/(m*sigma**2/epsilon)**.5 # dimensionless_timestep
 
-Nt = 500 # number of timesteps  
+Nt = 200 # number of timesteps  
 time = np.arange(0,Nt*h-0.0001,h)
 

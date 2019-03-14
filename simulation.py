@@ -5,11 +5,19 @@ import matplotlib.pyplot as plt
 from functions import *
 from anim import make_3d_animation
 from config import *
+from observables import *
+
+def seperation_distance_plot(min_dis):
+    plt.figure()
+    plt.title('seperation distance histogram')
+    plt.hist(min_dis,50)
+    plt.xlabel('distance')
+    plt.ylabel('number of pairs')
 
 if __name__ == "__main__":
 
     vel, pos, pot_energy, kin_energy, drift_velocity, vir = build_matrices()
-    vel, pos, force, pot_energy[0], kin_energy[0], vir = initial_state(vel, pos, pot_energy[0], kin_energy[0], vir)
+    vel, pos, force, pot_energy[0], kin_energy[0], vir, seperation_histogram = initial_state(vel, pos, pot_energy[0], kin_energy[0], vir)
 
     #pos,vel,temperature_evolution,pot_energy[0], kin_energy[0],drift_velocity=redistributing_velocity(vel, pos, force,pot_energy[0], kin_energy[0],drift_velocity)
     
@@ -21,8 +29,10 @@ if __name__ == "__main__":
     
 #    drift = drift_velocity(vel,Nt,dim,drift)
 
+    seperation_distance_plot(seperation_histogram)
+
     plt.figure()
-    
+
     plt.title('kinetic energy of all particles')
     
     plt.plot(time,kin_energy,label='kinetic energy')

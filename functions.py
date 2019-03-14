@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy import spatial
 from anim import make_3d_animation
 from config import *
-
+from observables import *
 
 def build_matrices():
     """Create the matrices used throughout the calculations.
@@ -111,6 +111,7 @@ def initial_state(vel, pos,  pot_energy_t0, kin_energy_t0, vir):
     pos = fcc_lattice(pos)
     
     min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
+    
     force = calculate_force(min_dir, min_dis)
 
     pot_energy_t0 = calculate_potential_energy(pos, min_dis,min_dir, pot_energy_t0)
@@ -119,7 +120,7 @@ def initial_state(vel, pos,  pot_energy_t0, kin_energy_t0, vir):
     
     vir[0] = virial_theorem(pos)
     
-    return(vel, pos, force, pot_energy_t0, kin_energy_t0, vir)
+    return(vel, pos, force, pot_energy_t0, kin_energy_t0, vir, min_dis)
 
 
 def calculate_minimal_distance_and_direction(pos_at_t):
@@ -302,25 +303,18 @@ def redistributing_velocity(vel, pos, force,pot_energy_t0, kin_energy_t0,drift_v
      return(pos,vel,temperature_evolution,pot_energy_t0,kin_energy_t0,drift_velocity, vir)
      
      
-     
 def scaling_to_correct_dimensions(time,kin_energy,pot_energy):
     time=time*(m*sigma**2/epsilon)**.5
     kin_energy=kin_energy*(m/epsilon)
-    pot_energy=pot_energy*(m/epsilon)
-    
+    pot_energy=pot_energy*(m/epsilon)    
     return(time,kin_energy,pot_energy)
 
 def virial_theorem(pos_at_t):
     min_dis, min_dir = calculate_minimal_distance_and_direction(pos_at_t)
     vir = ma.array(min_dis**2 * ((-48*ma.power(min_dis,-14))+24*ma.power(min_dis,-8)))
-    vir = np.sum(vir)
-   
+    vir = np.sum(vir)   
     return(vir)
     
-def calculate_pressure(vir):
-    p = N_particle*kb*temperature/(L*L)-(1/3)*0.5*vir
-    
-    return(p)
     
 
     
