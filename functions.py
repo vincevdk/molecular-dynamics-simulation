@@ -164,13 +164,25 @@ def calculate_minimal_distance_and_direction(pos_at_t):
     return(min_dis, min_dir)
 
 
-def calculate_potential_energy(pos_at_t, min_dis,
-                               min_dir, potential_energy_at_t):
+def calculate_potential_energy(min_dis_at_t, potential_energy):
+    """ Dimensionless Lennard-Jones potential energy
+    
+    Parameters:
+    -----------
+    min_dis_at_t: array of size (N_particle, N_particle)
+       A single matrix entry [i,j] is the distance between particle i and j.
+    potential_energy: float
 
-    # dimensionless potential energy given in lecture notes
-    potential_energy_at_t = np.sum(
-        4 * (ma.power(min_dis, -12) - ma.power(min_dis, -6))) / 2
-    return(potential_energy_at_t)
+    Results:
+    --------
+    potential_energy: float
+       Total potential energy of the system
+    """
+
+    potential_energy = np.sum(4 * (ma.power(min_dis_at_t, -12) 
+                                   - ma.power(min_dis_at_t, -6))) / 2
+    print(type(potential_energy))
+    return(potential_energy)
 
 
 def calculate_force_matrix(min_dir_at_t, min_dis_at_t):
@@ -193,8 +205,8 @@ def calculate_force_matrix(min_dir_at_t, min_dis_at_t):
        (x,y or z) between i and j (i_l - j_l). Thus the matrix has zeros on
        the diagonal as the distance between the particle and itself is zero.
     """
-    F = ma.array(min_dir_at_t * ((-48 * ma.power(min_dis_at_t, -14)
-                                  ) + 24 * ma.power(min_dis_at_t, -8)))
+    F = ma.array(min_dir_at_t * (- 48 * ma.power(min_dis_at_t, -14) 
+                                 + 24 * ma.power(min_dis_at_t, -8)))
     return(F)
 
 
@@ -230,9 +242,7 @@ def calculate_time_evolution(vel, pos, potential_energy,
 
     min_dis, min_dir = calculate_minimal_distance_and_direction(pos)           
     force = calculate_force(min_dir, min_dis)                                  
-    potential_energy[0] = calculate_potential_energy(pos, 
-                                                     min_dis, 
-                                                     min_dir, 
+    potential_energy[0] = calculate_potential_energy(min_dis, 
                                                      potential_energy[0])
 
     kinetic_energy[0] = calculate_kinetic_energy(kinetic_energy[0], vel) 
@@ -244,8 +254,8 @@ def calculate_time_evolution(vel, pos, potential_energy,
         min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
         force = calculate_force(min_dir, min_dis)
         vel = vel + h * force / 2
-        potential_energy[v] = calculate_potential_energy(
-            pos, min_dis, min_dir, potential_energy[v])
+        potential_energy[v] = calculate_potential_energy(min_dis, 
+                                                         potential_energy[v])
         kinetic_energy[v] = calculate_kinetic_energy(kinetic_energy[v], vel)
         drift_velocity[v, :] = np.sum(vel, axis=0)
         vir[v] = virial_theorem(pos)
@@ -253,12 +263,28 @@ def calculate_time_evolution(vel, pos, potential_energy,
     return(potential_energy, kinetic_energy, drift_velocity, vir)
 
 
-def calculate_kinetic_energy(kinetic_energy_at_t, vel):
-    # for each particle the kinetic energy is:
-    # E_{kin} = 0.5 m (v_x^2 + v_y^2 + v_z^2)
-    # the total kinetic energy is the sum of all particles
-    kinetic_energy_at_t = 0.5 * \
-        np.sum(vel[:, 0]**2 + vel[:, 1]**2 + vel[:, 2]**2)
+def calculate_kinetic_energy(kinetic_energy, vel):
+    """Calculates the total kinetic energy of the system
+    for each particle: E_kin = 0.5 m (v_x^2 + v_y^2 + v_z^2)
+    the total kinetic energy is the sum of all particles   
+    
+    Parameters:
+    -----------
+    kinetic_energy: float
+       kinetic energy of the system
+    vel: array of size (N_particle, 3)
+       The velocity of N particles in 3 dimensions. The first index of the
+       array corresponds to a particle.
+
+    Results:
+    --------
+    kinetic_energy: float
+       kinetic energy of the system
+    """
+
+    kinetic_energy_at_t = 0.5 * np.sum(vel[:, 0]**2 
+                                       + vel[:, 1]**2 
+                                       + vel[:, 2]**2)
     return(kinetic_energy_at_t)
 
 
