@@ -2,10 +2,9 @@ import numpy as np
 import numpy.ma as ma
 import matplotlib.pyplot as plt
 
-from functions import *
-from anim import make_3d_animation
-from config import *
-from observables import *
+from src.functions import *
+from src.config import *
+from src.observables import *
 
 def seperation_distance_plot(min_dis):
     plt.figure()
