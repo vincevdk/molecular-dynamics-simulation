@@ -44,7 +44,7 @@ if __name__ == "__main__":
            
     plt.figure()
     
-    plt.semilogy(rescaling_time)
+    plt.plot(rescaling_time)
     plt.xlabel('time (s)')
     plt.ylabel('rescaling factor')
     

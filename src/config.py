@@ -4,7 +4,9 @@ import numpy as np
 dim = 3
 temperature = 100
 N_particle = 32
-L = 10  # size of the box in units sigma 
+#density=N_particle/L**3
+density=0.81 #units of 1/sigma**3
+L = (N_particle/density)**(1/3)  # size of the box in units sigma 
 timestep = 10**-14
 
 # Properties of Argon atoms and physical constants
