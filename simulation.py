@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from src.functions import *
 from src.config import *
 from src.observables import *
+from src.initial_state import *
 
 def seperation_distance_plot(min_dis):
     plt.figure()
@@ -12,6 +13,7 @@ def seperation_distance_plot(min_dis):
     plt.hist(min_dis,50)
     plt.xlabel('distance')
     plt.ylabel('number of pairs')
+
 
 def energy_plot(kin_energy, pot_energy, total_energy):
     plt.figure()
