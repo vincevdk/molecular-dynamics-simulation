@@ -2,10 +2,10 @@ import numpy as np
 
 # Chosen settings for simulation 
 dim = 3
-temperature = 100
+temperature = 119.8
 N_particle = 32
 #density=N_particle/L**3
-density=0.81 #units of 1/sigma**3
+density=0.88 #units of 1/sigma**3
 L = (N_particle/density)**(1/3)  # size of the box in units sigma 
 timestep = 10**-14
 

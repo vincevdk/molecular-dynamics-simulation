@@ -10,11 +10,18 @@ from src.production_phase import *
 from src.equilibration_phase import *
 
 
-rescaling_time=np.ones(shape=1)
+rescaling_time=np.ones(shape=1,dtype=float)
+temperature_time=np.ones(shape=1)
+
+def temperature_calculator(vel,temperature_time):
+    
+    temperature_current=np.sum(vel**2)*1/(3*(N_particle-1))
+    temperature_time=np.append(temperature_time,temperature_current)
+    return(temperature_time,temperature_current)
 
 def redistribute_velocity(vel,pos,rescaling_time):
     kinetic_energy = calculate_kinetic_energy(0, vel)
-    rescaling_factor = (N_particle - 1)*3/2*temperature/kinetic_energy
+    rescaling_factor = ((N_particle - 1)*3/2*temperature/kinetic_energy)**.5
     vel = vel*rescaling_factor
     rescaling_time=np.append(rescaling_time,rescaling_factor)
     
@@ -38,6 +45,7 @@ if __name__ == "__main__":
         force = calculate_force(min_dir, min_dis)
         vel = vel + h * force / 2
         if v%20 == 0:
+           temperature_time,test=temperature_calculator(vel,temperature_time)
            vel, rescaling_time = redistribute_velocity(vel,pos,rescaling_time)
            average_velocity=np.append(average_velocity,np.sum(vel**2))
            
@@ -49,7 +57,7 @@ if __name__ == "__main__":
     plt.ylabel('rescaling factor')
     
     plt.figure()
-    plt.plot(rescaling_time)
+    plt.plot(temperature_time)
         
     plt.show()
 #           testing if the for loop is correct
