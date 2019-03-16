@@ -17,17 +17,21 @@ def build_matrices():
     potential_energy: array of size Nt
        The potential energy of all particles at each timestep.
     kinetic_energy: array of size Nt
-       The kintetic_energy of all particles at each timestep.
+       The kintetic energy of all particles at each timestep.
+    vir: array of size Nt
+       The sum (over all pairs) of the distance times the force between two 
+       pairs.
+    sep_hist: array of size (Nt, 200)
+       Histogram with 200 bins of the seperation distance between particles
     """
     vel = np.zeros(shape=(N_particle, dim), dtype=float)
     pos = np.zeros(shape=(N_particle, dim), dtype=float)
     potential_energy = np.zeros(Nt, dtype=float)
     kinetic_energy = np.zeros(Nt, dtype=float)
-    drift_velocity = np.zeros(shape=(Nt, 3), dtype=float)
     vir = np.zeros(Nt, dtype=float)
     sep_hist = np.zeros(shape=(Nt,200), dtype=float)
-    return(vel, pos, potential_energy, kinetic_energy, 
-           drift_velocity, vir, sep_hist)
+
+    return(vel, pos, potential_energy, kinetic_energy, vir, sep_hist)
 
 
 def fcc_lattice(pos_at_0):
