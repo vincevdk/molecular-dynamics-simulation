@@ -3,7 +3,7 @@ import numpy as np
 # Chosen settings for simulation 
 dim = 3
 temperature = 100
-N_particle = 108
+N_particle = 32
 L = 10  # size of the box in units sigma 
 timestep = 10**-14
 
@@ -22,3 +22,4 @@ equilibration_time = np.arange(0, total_equilibration_time,h)
 simulation_time = np.arange(total_equilibration_time, 
                             total_equilibration_time+total_simulation_time,h)
 
+Nt = len(simulation_time)

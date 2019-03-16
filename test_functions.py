@@ -1,5 +1,5 @@
 import numpy as np
-from simulation import calculate_minimal_distance_and_direction, calculate_force, calculate_force_matrix, fcc_lattice
+from ..simulation import calculate_minimal_distance_and_direction, calculate_force, calculate_force_matrix, fcc_lattice
 import pytest
 
 
