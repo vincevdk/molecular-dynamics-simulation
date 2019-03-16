@@ -39,7 +39,10 @@ def equilibrate(vel, pos):
        every loop. (not implemented in other parts of the code, except for
        tests)
    """
-    for v in range(total_equilibration_time):
+    min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
+    force = calculate_force(min_dir, min_dis)
+    
+    for v in range(len(equilibration_time)):
         vel = vel + h * force / 2
         pos = (pos + h * vel) % L
         min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
