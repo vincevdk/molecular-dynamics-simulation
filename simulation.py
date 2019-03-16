@@ -64,7 +64,7 @@ if __name__ == "__main__":
     total_energy=calculate_total_energy(kin_energy,pot_energy)
 
     p = calculate_pressure(virial)
-    
+    p=p/(density*temperature*119.8)
 #    drift = drift_velocity(vel,Nt,dim,drift)
 
 #    seperation_distance_plot(seperation_histogram)
