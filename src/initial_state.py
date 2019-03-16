@@ -96,7 +96,7 @@ def initial_state(vel, pos):
       The positon of N particles in 3 dimensions. The first index of the
       array corresponds to a particle.
     """
-    energy = -np.log(np.random.rand(N_particle, dim)) * kb * temperature
+    energy = -np.log(np.random.rand(N_particle, dim)) * kb * temperature*119.8
     # inverting the probability function  to energy
     energy = energy * m / epsilon  # dimensionless
     posneg = np.random.randint(2, size=(N_particle, dim)) * 2 - 1
