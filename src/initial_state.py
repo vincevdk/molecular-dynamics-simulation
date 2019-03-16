@@ -25,8 +25,9 @@ def build_matrices():
     kinetic_energy = np.zeros(Nt, dtype=float)
     drift_velocity = np.zeros(shape=(Nt, 3), dtype=float)
     vir = np.zeros(Nt, dtype=float)
-
-    return(vel, pos, potential_energy, kinetic_energy, drift_velocity, vir)
+    sep_hist = np.zeros(shape=(Nt,200), dtype=float)
+    return(vel, pos, potential_energy, kinetic_energy, 
+           drift_velocity, vir, sep_hist)
 
 
 def fcc_lattice(pos_at_0):

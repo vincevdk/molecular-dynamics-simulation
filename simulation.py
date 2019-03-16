@@ -35,36 +35,34 @@ def energy_plot(kin_energy, pot_energy, total_energy):
 if __name__ == "__main__":
 
     # initialization
-    vel, pos, pot_energy, kin_energy, drift_velocity, vir = build_matrices()
+    (vel, pos, pot_energy, kin_energy, 
+     drift_velocity, vir, sep_hist) = build_matrices()
+
     vel, pos = initial_state(vel, pos)
     
     # equilibration phase
+    pos, vel = equilibrate(vel,pos)
 
     # production phase
-
-    # data processing 
-
-#    pos,vel,temperature_evolution,pot_energy[0], kin_energy[0],drift_velocity=redistributing_velocity(vel, pos, force,pot_energy[0], kin_energy[0],drift_velocity, vir)
-
-    
-    (pot_energy, kin_energy, 
-     drift_velocity, virial) = calculate_time_evolution(vel,
-                                                        pos, 
+    (pot_energy, kin_energy,
+     drift_velocity, virial, sep_hist) = calculate_time_evolution(vel,
+                                                        pos,
                                                         pot_energy,
-                                                        kin_energy, 
+                                                        kin_energy,
                                                         drift_velocity,
-                                                        vir)
-
+                                                        vir, sep_hist)
+    # data processing phase
     (simulation_time,
      kin_energy,
      pot_energy) = scaling_to_correct_dimensions(simulation_time,
-                                                  kin_energy,
-                                                  pot_energy)
+                                                 kin_energy,
+                                                 pot_energy)
 
     total_energy=calculate_total_energy(kin_energy,pot_energy)
 
     p = calculate_pressure(virial)
     p=p/(density*temperature*119.8)
+
 #    drift = drift_velocity(vel,Nt,dim,drift)
 
 #    seperation_distance_plot(seperation_histogram)

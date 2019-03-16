@@ -7,7 +7,7 @@ from src.functions import *
 
 def redistribute_velocity(vel,pos):
     kinetic_energy = calculate_kinetic_energy(0, vel)
-    rescaling_factor = ((N_particles - 1)*3/2*temperature/kinetic_energy)**.5
+    rescaling_factor = ((N_particle - 1)*3/2*temperature/kinetic_energy)**.5
     vel = vel*rescaling_factor
     return(vel)
 
