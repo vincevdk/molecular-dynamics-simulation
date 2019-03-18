@@ -8,11 +8,13 @@ from src.observables import *
 from src.initial_state import *
 from src.production_phase import *
 from src.equilibration_phase import *
+import time
+start = time.time()
+
 
 def seperation_distance_plot(min_dis):
-    plt.figure()
     plt.title('seperation distance histogram')
-    plt.hist(min_dis,50)
+    plt.hist(min_dis,50,alpha=0.7)
     plt.xlabel('distance')
     plt.ylabel('number of pairs')
 
@@ -36,7 +38,7 @@ if __name__ == "__main__":
 
     # initialization
     (vel, pos, pot_energy, kin_energy, vir, sep_hist) = build_matrices()
-
+    pos_zero=pos
     vel, pos = initial_state(vel, pos)
     
     # equilibration phase
@@ -49,7 +51,7 @@ if __name__ == "__main__":
     # data processing phase
     (simulation_time,
      kin_energy,
-     pot_energy) = scaling_to_correct_dimensions(simulation_time,
+#     pot_energy) = scaling_to_correct_dimensions(simulation_time,
                                                  kin_energy,
                                                  pot_energy)
 
@@ -60,10 +62,20 @@ if __name__ == "__main__":
 
 
     energy_plot(kin_energy, pot_energy, total_energy)
-
-    plt.figure()
     
-    plt.title('drift velocity gass')
+    
+    
+    ## histogram distance particles
+    plt.figure()
+    min_dis_zero, min_dir=calculate_minimal_distance_and_direction(pos_zero)
+    plt.hist(np.sort(min_dis_zero.flatten())[N_particle:],50,color='r')
+
+    
+
+    min_dis, min_dir=calculate_minimal_distance_and_direction(pos)
+    min_dis=np.sort(min_dis.flatten())
+
+    seperation_distance_plot(min_dis[N_particle:])
     
     
     plt.figure()
@@ -71,10 +83,8 @@ if __name__ == "__main__":
     plt.plot(simulation_time,p)
     plt.xlabel('time (s)')
     plt.ylabel('pressure')
-            
-    # plot for the histogram with some matrix to vector and unique value transformations
-    min_dis, min_dir=calculate_minimal_distance_and_direction(pos)
-    seperation_distance_plot(np.unique(min_dis.flatten())[1:])
-    
+        
     plt.show()
        
+    end = time.time()
+    print("the total elapsed time is:",end - start)
