@@ -14,9 +14,11 @@ start = time.time()
 
 def seperation_distance_plot(min_dis):
     plt.title('seperation distance histogram')
-    plt.hist(min_dis,50,alpha=0.7)
+    plt.hist(min_dis,50,alpha=0.7, label="simulation")
     plt.xlabel('distance')
     plt.ylabel('number of pairs')
+    plt.grid(b=None, which='major', axis='both')
+    plt.legend(loc='best')
 
 
 def energy_plot(kin_energy, pot_energy, total_energy):
@@ -49,11 +51,11 @@ if __name__ == "__main__":
      virial, sep_hist) = calculate_time_evolution(vel, pos, pot_energy,
                                                   kin_energy, vir, sep_hist)
     # data processing phase
-    (simulation_time,
-     kin_energy,
+#    (simulation_time,
+#     kin_energy,
 #     pot_energy) = scaling_to_correct_dimensions(simulation_time,
-                                                 kin_energy,
-                                                 pot_energy)
+#                                                 kin_energy,
+#                                                 pot_energy)
 
     total_energy=calculate_total_energy(kin_energy,pot_energy)
 
@@ -68,7 +70,7 @@ if __name__ == "__main__":
     ## histogram distance particles
     plt.figure()
     min_dis_zero, min_dir=calculate_minimal_distance_and_direction(pos_zero)
-    plt.hist(np.sort(min_dis_zero.flatten())[N_particle:],50,color='r')
+    plt.hist(np.sort(min_dis_zero.flatten())[N_particle:],50,color='r',label="ffc cubic ")
 
     
 
