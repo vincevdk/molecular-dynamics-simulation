@@ -71,6 +71,10 @@ if __name__ == "__main__":
     plt.plot(simulation_time,p)
     plt.xlabel('time (s)')
     plt.ylabel('pressure')
-        
+            
+    # plot for the histogram with some matrix to vector and unique value transformations
+    min_dis, min_dir=calculate_minimal_distance_and_direction(pos)
+    seperation_distance_plot(np.unique(min_dis.flatten())[1:])
+    
     plt.show()
        
