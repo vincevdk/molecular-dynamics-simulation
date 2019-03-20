@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     # initialization
     (vel, pos, pot_energy, kin_energy, vir, sep_hist) = build_matrices()
-    pos_zero=pos
+
     vel, pos = initial_state(vel, pos)
     
     # equilibration phase
@@ -50,6 +50,7 @@ if __name__ == "__main__":
     (pot_energy, kin_energy, 
      virial, sep_hist) = calculate_time_evolution(vel, pos, pot_energy,
                                                   kin_energy, vir, sep_hist)
+    print(sep_hist)
     # data processing phase
 #    (simulation_time,
 #     kin_energy,
@@ -62,24 +63,17 @@ if __name__ == "__main__":
     p = calculate_pressure(virial)
     p=p/(density*temperature*119.8)
 
-
     energy_plot(kin_energy, pot_energy, total_energy)
-    
-    
     
     ## histogram distance particles
     plt.figure()
     min_dis_zero, min_dir=calculate_minimal_distance_and_direction(pos_zero)
     plt.hist(np.sort(min_dis_zero.flatten())[N_particle:],50,color='r',label="ffc cubic ")
 
-    
-
     min_dis, min_dir=calculate_minimal_distance_and_direction(pos)
     min_dis=np.sort(min_dis.flatten())
-
     seperation_distance_plot(min_dis[N_particle:])
-    
-    
+    print(min_dis[N_particle:])
     plt.figure()
     
     plt.plot(simulation_time,p)
