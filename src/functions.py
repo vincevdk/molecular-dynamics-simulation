@@ -61,7 +61,7 @@ def calculate_potential_energy(min_dis_at_t, potential_energy):
        Total potential energy of the system
     """
 
-    potential_energy = (1/N_particle)*np.sum(4 * (ma.power(min_dis_at_t, -12) 
+    potential_energy = np.sum(4 * (ma.power(min_dis_at_t, -12) 
                                    - ma.power(min_dis_at_t, -6))) / 2
     return(potential_energy)
 
@@ -139,13 +139,85 @@ def calculate_kinetic_energy(kinetic_energy, vel):
 
     kinetic_energy_at_t = 0.5 * np.sum(vel[:, 0]**2 
                                        + vel[:, 1]**2 
-                                       + vel[:, 2]**2)/N_particle
+                                       + vel[:, 2]**2)
     return(kinetic_energy_at_t)
 
 
 def calculate_total_energy(kin_energy, pot_energy):
     total_energy = kin_energy + pot_energy
     return(total_energy)
+
+
+def redistributing_velocity(vel, pos, force, pot_energy_t0,
+                            kin_energy_t0, drift_velocity, vir):
+    """function which rescales the velocity according to the required
+    temperature. This is done by running the time evolution and checking if
+    the temperature is correct at the end afterwhich the scaling factor
+    scales it to the required temperature untill it converges
+
+    Parameters:
+    -----------
+    vel: array of size (N_particle, 3)
+       The velocity of N particles in 3 dimensions. The first index of the
+       array corresponds to a particle.
+    pos: array of size (N_particle, 3)
+       The positon of N particles in 3 dimensions. The first index of the
+       array corresponds to a particle.
+    pot_energy_t0: array of size 1
+       The potential energy of all particles at the start.
+    kin_energy_t0: array of size 1
+       The kinetic_energy of all particles at the start.
+
+    Results:
+    -------
+   pos:array of size (N_particle, 3)
+      The positon of N particles in 3 dimensions. The first index of the array
+      corresponds to a particle.
+   vel:array of size (N_particle, 3)
+      The velocity of N particles in 3 dimensions. The first index of the
+      array corresponds to a particle.
+   temperature_evolution: array of size (100)
+       testfunction which shows what the temperature was before rescaling
+       every loop. (not implemented in other parts of the code, except for
+       tests)
+   pot_energy_t0:array of size 1
+      The potential energy of all particles at the start.
+   kin_energy_t0:array of size 1
+      The kinetic_energy of all particles at the start.
+   """
+
+    test_temperature = np.zeros(shape=1)
+    temperature_evolution = np.zeros(shape=1)
+    i = 0
+
+    while np.absolute(test_temperature - temperature) > 2:
+        for v in range(100):
+            vel = vel + h * force / 2
+            pos = (pos + h * vel) % L
+            min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
+            force = calculate_force(min_dir, min_dis)
+            vel = vel + h * force / 2
+
+        test_temperature = np.sum(vel**2) * 119.8 / (6 * (N_particle - 1))
+        temperature_evolution = np.append(
+            temperature_evolution, test_temperature)
+
+        scaling_dimensionless = (
+            (N_particle - 1) * 3 * temperature / (119.8 * np.sum(vel**2))) * 2
+        vel = scaling_dimensionless * vel
+        i += 1
+
+    # kinetic energy and potential energy
+    min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
+    force = calculate_force(min_dir, min_dis)
+    pot_energy_t0 = calculate_potential_energy(
+        pos, min_dis, min_dir, pot_energy_t0)
+    kin_energy_t0 = calculate_kinetic_energy(kin_energy_t0, vel)
+    drift_velocity[0, :] = np.sum(vel, axis=0)
+
+    return(pos, vel, temperature_evolution, pot_energy_t0,
+           kin_energy_t0, drift_velocity, vir)
+
 
 def scaling_to_correct_dimensions(time, kin_energy, pot_energy):
     time = time * (m * sigma**2 / epsilon)**.5
