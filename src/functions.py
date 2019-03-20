@@ -61,7 +61,7 @@ def calculate_potential_energy(min_dis_at_t, potential_energy):
        Total potential energy of the system
     """
 
-    potential_energy = np.sum(4 * (ma.power(min_dis_at_t, -12) 
+    potential_energy = (1/N_particle)*np.sum(4 * (ma.power(min_dis_at_t, -12) 
                                    - ma.power(min_dis_at_t, -6))) / 2
     return(potential_energy)
 
@@ -139,7 +139,7 @@ def calculate_kinetic_energy(kinetic_energy, vel):
 
     kinetic_energy_at_t = 0.5 * np.sum(vel[:, 0]**2 
                                        + vel[:, 1]**2 
-                                       + vel[:, 2]**2)
+                                       + vel[:, 2]**2)/N_particle
     return(kinetic_energy_at_t)
 
 
