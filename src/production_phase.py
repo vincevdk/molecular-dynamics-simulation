@@ -44,7 +44,7 @@ def calculate_time_evolution(vel, pos, potential_energy,
 
     kinetic_energy[0] = calculate_kinetic_energy(kinetic_energy[0], vel) 
     vir[0] = virial_theorem(pos)
-    seperation_histogram[0], _ = np.histogram(min_dis, 200)
+    seperation_histogram[0], bins = np.histogram(min_dis, 200)
 
     for v in range(1, Nt):
         vel = vel + h * force / 2
@@ -58,6 +58,7 @@ def calculate_time_evolution(vel, pos, potential_energy,
         kinetic_energy[v] = calculate_kinetic_energy(kinetic_energy[v], vel)
         vir[v] = virial_theorem(pos)
 
-        seperation_histogram[v], _ = np.histogram(min_dis, 200)  
+        seperation_histogram[v], _ = np.histogram(np.sort(min_dis.flatten()), 
+                                                  bins)  
 
-    return(potential_energy, kinetic_energy, vir, seperation_histogram )
+    return(potential_energy, kinetic_energy, vir, seperation_histogram, bins )
