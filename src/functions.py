@@ -145,86 +145,21 @@ def calculate_total_energy(kin_energy, pot_energy):
     return(total_energy)
 
 
-def redistributing_velocity(vel, pos, force, pot_energy_t0,
-                            kin_energy_t0, drift_velocity, vir):
-    """function which rescales the velocity according to the required
-    temperature. This is done by running the time evolution and checking if
-    the temperature is correct at the end afterwhich the scaling factor
-    scales it to the required temperature untill it converges
-
+def virial_theorem(pos):
+    """
     Parameters:
     -----------
-    vel: array of size (N_particle, 3)
-       The velocity of N particles in 3 dimensions. The first index of the
-       array corresponds to a particle.
-    pos: array of size (N_particle, 3)
-       The positon of N particles in 3 dimensions. The first index of the
-       array corresponds to a particle.
-    pot_energy_t0: array of size 1
-       The potential energy of all particles at the start.
-    kin_energy_t0: array of size 1
-       The kinetic_energy of all particles at the start.
-
+    pos: array of size (N_particle, 3) 
+       The positon of N particles in 3 dimensions. The first index of the      
+       array corresponds to a particle. 
     Results:
-    -------
-   pos:array of size (N_particle, 3)
-      The positon of N particles in 3 dimensions. The first index of the array
-      corresponds to a particle.
-   vel:array of size (N_particle, 3)
-      The velocity of N particles in 3 dimensions. The first index of the
-      array corresponds to a particle.
-   temperature_evolution: array of size (100)
-       testfunction which shows what the temperature was before rescaling
-       every loop. (not implemented in other parts of the code, except for
-       tests)
-   pot_energy_t0:array of size 1
-      The potential energy of all particles at the start.
-   kin_energy_t0:array of size 1
-      The kinetic_energy of all particles at the start.
-   """
-
-    test_temperature = np.zeros(shape=1)
-    temperature_evolution = np.zeros(shape=1)
-    i = 0
-
-    while np.absolute(test_temperature - temperature) > 2:
-        for v in range(100):
-            vel = vel + h * force / 2
-            pos = (pos + h * vel) % L
-            min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
-            force = calculate_force(min_dir, min_dis)
-            vel = vel + h * force / 2
-
-        test_temperature = np.sum(vel**2) * 119.8 / (6 * (N_particle - 1))
-        temperature_evolution = np.append(
-            temperature_evolution, test_temperature)
-
-        scaling_dimensionless = (
-            (N_particle - 1) * 3 * temperature / (119.8 * np.sum(vel**2))) * 2
-        vel = scaling_dimensionless * vel
-        i += 1
-
-    # kinetic energy and potential energy
+    vir: array of size len(simulation_time)                                    
+       the virial is defined as: <0.5 Sum_(i,j) (r_(i,j) dU/dr_(ij))>          
+       where the sum is over i,j, i.e all particle pairs. r_(ij) is the        
+       distance between a pair of particles 
+    --------
+    """
     min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
-    force = calculate_force(min_dir, min_dis)
-    pot_energy_t0 = calculate_potential_energy(
-        pos, min_dis, min_dir, pot_energy_t0)
-    kin_energy_t0 = calculate_kinetic_energy(kin_energy_t0, vel)
-    drift_velocity[0, :] = np.sum(vel, axis=0)
-
-    return(pos, vel, temperature_evolution, pot_energy_t0,
-           kin_energy_t0, drift_velocity, vir)
-
-
-def scaling_to_correct_dimensions(time, kin_energy, pot_energy):
-    time = time * (m * sigma**2 / epsilon)**.5
-    kin_energy = kin_energy * (m / epsilon)
-    pot_energy = pot_energy * (m / epsilon)
-    return(time, kin_energy, pot_energy)
-
-
-def virial_theorem(pos_at_t):
-    min_dis, min_dir = calculate_minimal_distance_and_direction(pos_at_t)
     vir = ma.array(
         min_dis**2 * (-48 * ma.power(min_dis, -14) 
          + 24 * ma.power(min_dis, -8)))
