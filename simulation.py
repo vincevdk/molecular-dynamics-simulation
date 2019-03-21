@@ -26,6 +26,21 @@ def energy_plot(kin_energy, pot_energy, total_energy):
     plt.grid(b=None, which='major', axis='both')
     plt.legend(loc='best')
 
+def pair_correlation_plot(bins, g_r):
+    plt.figure()
+    plt.title('pair correlation function')
+    plt.plot(bins[1:201], g_r)
+    plt.xlabel('r')
+    plt.ylabel('g(r)')
+
+
+def pressure_plot(p):
+    plt.figure()
+    plt.plot(simulation_time,p)
+    plt.xlabel('time (s)')
+    plt.ylabel('pressure')
+
+
 
 if __name__ == "__main__":
 
@@ -42,26 +57,19 @@ if __name__ == "__main__":
      virial, sep_hist, bins) = calculate_time_evolution(vel, pos, pot_energy,
                                                   kin_energy, vir, sep_hist)
 
+    # data processing phase
     total_energy=calculate_total_energy(kin_energy,pot_energy)
+    
+#    average_kin_energy_particle = time_average(kin_energy/N_particle)
+#    print(average_kin_energy_particle)
     p = calculate_pressure(virial)
     g_r = calculate_pair_correlation_function(sep_hist, bins)
 
     # creat output plots     
     energy_plot(kin_energy/N_particle, pot_energy/N_particle, total_energy/N_particle)
-    
-    plt.figure()
+    pair_correlation_plot(bins, g_r)
+    pressure_plot(p)
 
-    plt.title('pair correlation function')
-    print(bins)
-    plt.plot(bins[1:201], g_r)
-    
-    plt.figure()
-    
-    plt.plot(simulation_time,p)
-    plt.xlabel('time (s)')
-    plt.ylabel('pressure')
-        
     plt.show()
-       
     end = time.time()
     print("the total elapsed time is:",end - start)

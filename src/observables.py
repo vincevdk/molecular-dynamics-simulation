@@ -29,3 +29,10 @@ def calculate_pair_correlation_function(seperation_histogram,bins):
     delta_r = bins[1]-bins[0]
     pair_correlation_function = 2 * L**3 / (N_particle * (N_particle-1)) * average_sep_histogram / (4 * np.pi* bins[:-1]**2 * delta_r)
     return(pair_correlation_function)
+
+def time_average(calculated_variable):
+    """
+    """
+    average_of_variable = calculated_variable/len(simulation_time)
+
+    return(average_of_variable)
