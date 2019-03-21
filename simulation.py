@@ -60,8 +60,11 @@ if __name__ == "__main__":
     # data processing phase
     total_energy=calculate_total_energy(kin_energy,pot_energy)
     
-#    average_kin_energy_particle = time_average(kin_energy/N_particle)
-#    print(average_kin_energy_particle)
+    average_kin_energy_particle = time_average(kin_energy/N_particle)
+    average_pot_energy_particle = time_average(pot_energy/N_particle)
+    average_total_energy_particle = time_average(total_energy/N_particle)
+
+    print(average_kin_energy_particle, 'av kin_energy')
     p = calculate_pressure(virial)
     g_r = calculate_pair_correlation_function(sep_hist, bins)
 

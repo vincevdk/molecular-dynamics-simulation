@@ -33,6 +33,6 @@ def calculate_pair_correlation_function(seperation_histogram,bins):
 def time_average(calculated_variable):
     """
     """
-    average_of_variable = calculated_variable/len(simulation_time)
+    average_of_variable = np.sum(calculated_variable)/len(simulation_time)
 
     return(average_of_variable)
