@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from src.functions import *
 from src.config import *
-from src.observables import *
+from src.data_processing import *
 from src.initial_state import *
 from src.production_phase import *
 from src.equilibration_phase import *
@@ -64,7 +64,9 @@ if __name__ == "__main__":
     average_pot_energy_particle = time_average(pot_energy/N_particle)
     average_total_energy_particle = time_average(total_energy/N_particle)
 
-    print(average_kin_energy_particle, 'av kin_energy')
+    print(average_pot_energy_particle, 'average potentialenergy')
+    error = bootstrap(pot_energy/N_particle,100,100)
+    print(error, 'error')
     p = calculate_pressure(virial)
     g_r = calculate_pair_correlation_function(sep_hist, bins)
 

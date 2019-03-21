@@ -2,7 +2,6 @@ import numpy as np
 import numpy.ma as ma
 
 from src.config import *
-from src.observables import *
 from src.functions import *
 
 def redistribute_velocity(vel,pos):

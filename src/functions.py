@@ -1,10 +1,7 @@
 import numpy as np
 import numpy.ma as ma
-import matplotlib.pyplot as plt
 
-from scipy import spatial
 from src.config import *
-from src.observables import *
 
 
 def calculate_minimal_distance_and_direction(pos_at_t):

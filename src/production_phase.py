@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 
 from scipy import spatial
 from src.config import *
-from src.observables import *
 from src.functions import *
 
 def calculate_time_evolution(vel, pos, potential_energy,
