@@ -1,9 +1,10 @@
 import numpy as np
 import numpy.ma as ma
 
-from src.config import *
 from src.functions import *
+from src.config import *
 
+print(N_particle)
 
 def temperature_calculator(vel):
     temperature_current=np.sum(vel**2)*1/(3*(N_particle-1))
@@ -56,4 +57,5 @@ def equilibrate(vel, pos):
         vel = vel + h * force / 2
         if v%10 == 0:
            vel = redistribute_velocity(vel,pos)
+    vel = redistribute_velocity(vel,pos)
     return(pos, vel)

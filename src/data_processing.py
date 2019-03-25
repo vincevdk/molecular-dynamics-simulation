@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.ma as ma
-from src.config import *
 
+from src import config as cfg
 
 def calculate_pressure(vir):
     """" Calculates the pressure devided by kb*T*rho
@@ -21,7 +21,7 @@ def calculate_pressure(vir):
 
     """
     
-    p = 1 - 1/(kb* temperature * 3* N_particle)*0.5*vir
+    p = 1 - 1/(3* cfg.N_particle)*0.5*vir
 
     return(p)
 
@@ -48,11 +48,11 @@ def calculate_pair_correlation_function(seperation_histogram,bins):
     """
 
     average_sep_histogram = (np.sum(seperation_histogram, axis=0) \
-                                 /len(simulation_time))
+                                 /len(cfg.simulation_time))
 
     pair_correlation_function = np.array(200)
     delta_r = bins[1]-bins[0]
-    pair_correlation_function = (2 * L**3 / (N_particle * (N_particle-1)) \
+    pair_correlation_function = (2 * cfg.L**3 / (cfg.N_particle * (cfg.N_particle-1)) \
                                  * average_sep_histogram / (4 * np.pi* \
                                  bins[:-1]**2 * delta_r))
 
@@ -71,7 +71,7 @@ def time_average(calculated_variable):
        the time average of the input
     
     """
-    average_of_variable = np.sum(calculated_variable)/Nt
+    average_of_variable = np.sum(calculated_variable)/cfg.Nt
 
     return(average_of_variable)
 

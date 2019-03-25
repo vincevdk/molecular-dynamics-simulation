@@ -3,7 +3,7 @@ import numpy.ma as ma
 import matplotlib.pyplot as plt
 
 from scipy import spatial
-from src.config import *
+
 from src.functions import *
 from src.equilibration_phase import*
 
@@ -48,11 +48,11 @@ def calculate_time_evolution(vel, pos, potential_energy,
     seperation_histogram[0], bins = np.histogram(min_dis, 200)
 
     for v in range(1, Nt):
-        vel = vel + h * force / 2
-        pos = (pos + h * vel) % L
+        vel = vel + cfg.h * force / 2
+        pos = (pos + cfg.h * vel) % L
         min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
         force = calculate_force(min_dir, min_dis)
-        vel = vel + h * force / 2
+        vel = vel + cfg.h * force / 2
         potential_energy[v] = calculate_potential_energy(min_dis, 
                                                          potential_energy[v])
 
