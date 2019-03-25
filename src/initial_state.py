@@ -29,9 +29,10 @@ def build_matrices():
     potential_energy = np.zeros(Nt, dtype=float)
     kinetic_energy = np.zeros(Nt, dtype=float)
     vir = np.zeros(Nt, dtype=float)
+    t_current = np.zeros(Nt, dtype=float)
     sep_hist = np.zeros(shape=(Nt,200), dtype=float)
 
-    return(vel, pos, potential_energy, kinetic_energy, vir, sep_hist)
+    return(vel, pos, potential_energy, kinetic_energy, vir, sep_hist, t_current)
 
 
 def fcc_lattice(pos_at_0):

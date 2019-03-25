@@ -51,21 +51,17 @@ if __name__ == "__main__":
      virial, sep_hist) = calculate_time_evolution(vel, pos, pot_energy,
                                                   kin_energy, vir, sep_hist)
     # data processing phase
-#    (simulation_time,
-#     kin_energy,
-#     pot_energy) = scaling_to_correct_dimensions(simulation_time,
-#                                                 kin_energy,
-#                                                 pot_energy)
+    #(simulation_time,
+     #kin_energy,
+     #pot_energy) = scaling_to_correct_dimensions(simulation_time,
+     #                                            kin_energy,
+     #                                            pot_energy)
 
     total_energy=calculate_total_energy(kin_energy,pot_energy)
 
     p = calculate_pressure(virial)
-    p=p/(density*temperature*119.8)
-
-
-    energy_plot(kin_energy, pot_energy, total_energy)
     
-    
+    energy_plot(kin_energy/N_particle, pot_energy/N_particle, total_energy/N_particle)
     
     ## histogram distance particles
     plt.figure()
