@@ -8,7 +8,7 @@ from src.functions import *
 from src.equilibration_phase import*
 
 def calculate_time_evolution(vel, pos, potential_energy,
-                             kinetic_energy, vir, seperation_histogram):
+                             kinetic_energy, vir, seperation_histogram, t_current):
     """Uses velocity verlet
 
     Parameters:
@@ -44,6 +44,7 @@ def calculate_time_evolution(vel, pos, potential_energy,
 
     kinetic_energy[0] = calculate_kinetic_energy(kinetic_energy[0], vel) 
     vir[0] = virial_theorem(pos)
+    t_current[0] = temperature_calculator(vel)
     seperation_histogram[0], bins = np.histogram(min_dis, 200)
 
     for v in range(1, Nt):
@@ -60,5 +61,6 @@ def calculate_time_evolution(vel, pos, potential_energy,
 
         seperation_histogram[v], _ = np.histogram(np.sort(min_dis.flatten()), 
                                                   bins)  
+        t_current[v] = temperature_calculator(vel)
 
-    return(potential_energy, kinetic_energy, vir, seperation_histogram, bins )
+    return(potential_energy, kinetic_energy, vir, seperation_histogram, bins, t_current )
