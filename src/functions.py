@@ -36,9 +36,9 @@ def calculate_minimal_distance_and_direction(pos_at_t):
         L - L / 2)
     min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis=2))))
 
-    np.fill_diagonal(min_dis, 1)
-    min_dis[min_dis < threshold] = threshold
-    np.fill_diagonal(min_dis, 0)
+#    np.fill_diagonal(min_dis, 1)
+#    min_dis[min_dis < threshold] = threshold
+#    np.fill_diagonal(min_dis, 0)
 
     return(min_dis, min_dir)
 

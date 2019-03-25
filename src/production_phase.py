@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from scipy import spatial
 from src.config import *
 from src.functions import *
+from src.equilibration_phase import*
 
 def calculate_time_evolution(vel, pos, potential_energy,
                              kinetic_energy, vir, seperation_histogram):

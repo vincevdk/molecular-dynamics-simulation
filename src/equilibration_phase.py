@@ -4,10 +4,17 @@ import numpy.ma as ma
 from src.config import *
 from src.functions import *
 
+
+def temperature_calculator(vel):
+    temperature_current=np.sum(vel**2)*1/(3*(N_particle-1))
+    return(temperature_current)
+
 def redistribute_velocity(vel,pos):
+    """
+    """
     kinetic_energy = calculate_kinetic_energy(0, vel)
     rescaling_factor = ((N_particle - 1)*3/2*temperature/kinetic_energy)**.5
-    vel = vel*rescaling_factor
+    vel = vel*rescaling_factor    
     return(vel)
 
 def equilibrate(vel, pos):
@@ -47,6 +54,6 @@ def equilibrate(vel, pos):
         min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
         force = calculate_force(min_dir, min_dis)
         vel = vel + h * force / 2
-        if v%20 == 0:
+        if v%10 == 0:
            vel = redistribute_velocity(vel,pos)
     return(pos, vel)

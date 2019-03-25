@@ -21,7 +21,7 @@ def calculate_pressure(vir):
 
     """
     
-    p = 1 - kb*temperature/(3*N_particle)*0.5*vir
+    p = 1 - 1/(kb* temperature * 3* N_particle)*0.5*vir
 
     return(p)
 

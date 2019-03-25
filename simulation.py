@@ -51,7 +51,7 @@ if __name__ == "__main__":
     
     # equilibration phase
     pos, vel = equilibrate(vel,pos)
-
+    print(temperature_calculator(vel))
     # production phase
     (pot_energy, kin_energy, 
      virial, sep_hist, bins) = calculate_time_evolution(vel, pos, pot_energy,
