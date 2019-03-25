@@ -13,7 +13,7 @@ import time
 from src import config
 
 start = time.time()
-config.N_particle = 200
+
 def energy_plot(kin_energy, pot_energy, total_energy):
     plt.figure()
 
@@ -32,7 +32,7 @@ def energy_plot(kin_energy, pot_energy, total_energy):
 def pair_correlation_plot(bins, g_r):
     plt.figure()
     plt.title('pair correlation function')
-    plt.plot(bins[1:201], g_r)
+    plt.plot(bins[0:-1], g_r)
     plt.xlabel('r')
     plt.ylabel('g(r)')
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     p = calculate_pressure(virial)
     average_p = time_average(p)
     error_p = bootstrap(p,100,100)
-
+    
     g_r = calculate_pair_correlation_function(sep_hist, bins)
 
     # creat output plots     

@@ -21,7 +21,7 @@ def calculate_correlation_function(temp, dens):
 
     cfg.temperature = temp
     cfg.density = dens
-    cfg.L = (N_particle/density)**(1/3)  
+    cfg.L = (cfg.N_particle/cfg.density)**(1/3)  
 
     # initialization
     (vel, pos, pot_energy, kin_energy, vir, sep_hist) = build_matrices()
@@ -55,8 +55,8 @@ def calculate_correlation_function(temp, dens):
 
     return(g_r)
 
-temperature = np.array((1.06,1.06))
-pressure = np.array((0.827,0.827))
+temperature = np.array((1,0.5,3.0))
+pressure = np.array((0.8,1.2,0.3))
 
 for i in range(len(temperature)):
     temperature[i]
