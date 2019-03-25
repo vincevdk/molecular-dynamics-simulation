@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.ma as ma
 
-from src.config import *
+from src import config as cfg
 
 
 def calculate_minimal_distance_and_direction(pos_at_t):
@@ -25,21 +25,16 @@ def calculate_minimal_distance_and_direction(pos_at_t):
        An entry is calculated using the difference in coordinates from the
        min_dis matrix with the formula: sqrt(dx^2+dy^2+dz^2).
     """
-    threshold = 10**(-4)
+
     dimension_added = np.tile(pos_at_t, (len(pos_at_t), 1, 1))
     transposed_matrix = np.repeat(pos_at_t, len(pos_at_t), axis=0)
     transposed_matrix = np.reshape(
-        transposed_matrix, (len(pos_at_t), len(pos_at_t), dim))
+       transposed_matrix, (len(pos_at_t), len(pos_at_t), cfg.dim))
 
     min_dir = np.array(
-        (dimension_added - transposed_matrix + L / 2) %
-        L - L / 2)
+        (dimension_added - transposed_matrix + cfg.L / 2) %
+        cfg.L - cfg.L / 2)
     min_dis = np.array((np.sqrt(np.sum((min_dir**2), axis=2))))
-
-#    np.fill_diagonal(min_dis, 1)
-#    min_dis[min_dis < threshold] = threshold
-#    np.fill_diagonal(min_dis, 0)
-
     return(min_dis, min_dir)
 
 
