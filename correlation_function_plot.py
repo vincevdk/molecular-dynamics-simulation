@@ -24,7 +24,7 @@ def calculate_correlation_function(temp, dens):
     cfg.L = (cfg.N_particle/cfg.density)**(1/3)  
 
     # initialization
-    (vel, pos, pot_energy, kin_energy, vir, sep_hist) = build_matrices()
+    (vel, pos, pot_energy, kin_energy, vir, sep_hist, temp) = build_matrices()
     pos_zero=pos
     vel, pos = initial_state(vel, pos)
     
@@ -33,8 +33,8 @@ def calculate_correlation_function(temp, dens):
 
     # production phase
     (pot_energy, kin_energy, 
-     virial, sep_hist, bins) = calculate_time_evolution(vel, pos, pot_energy,
-                                                  kin_energy, vir, sep_hist)
+     virial, sep_hist, bins, temp) = calculate_time_evolution(vel, pos, pot_energy,
+                                                  kin_energy, vir, sep_hist,temp)
     # data processing phase
     total_energy=calculate_total_energy(kin_energy,pot_energy)
     

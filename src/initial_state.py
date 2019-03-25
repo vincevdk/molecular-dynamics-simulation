@@ -26,13 +26,13 @@ def build_matrices():
        Histogram with 200 bins of the seperation distance between particles
     """
 
-    vel = np.zeros(shape=(N_particle, dim), dtype=float)
-    pos = np.zeros(shape=(N_particle, dim), dtype=float)
-    potential_energy = np.zeros(Nt, dtype=float)
-    kinetic_energy = np.zeros(Nt, dtype=float)
-    vir = np.zeros(Nt, dtype=float)
-    t_current = np.zeros(Nt, dtype=float)
-    sep_hist = np.zeros(shape=(Nt,200), dtype=float)
+    vel = np.zeros(shape=(cfg.N_particle, cfg.dim), dtype=float)
+    pos = np.zeros(shape=(cfg.N_particle, cfg.dim), dtype=float)
+    potential_energy = np.zeros(cfg.Nt, dtype=float)
+    kinetic_energy = np.zeros(cfg.Nt, dtype=float)
+    vir = np.zeros(cfg.Nt, dtype=float)
+    t_current = np.zeros(cfg.Nt, dtype=float)
+    sep_hist = np.zeros(shape=(cfg.Nt,200), dtype=float)
 
 
     return(vel, pos, potential_energy, kinetic_energy, vir, sep_hist, t_current)
