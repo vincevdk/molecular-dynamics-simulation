@@ -13,10 +13,15 @@ from src import config as cfg
 def pair_correlation_plot(bins, g_r):
     plt.figure()
     plt.title('pair correlation function')
-    plt.plot(bins[1:201], g_r)
+    liquid, = plt.plot(bins[1:201], g_r[0], label="liquid" ) 
+    solid, =plt.plot(bins[1:201], g_r[1], label="solid")
+    gas, = plt.plot(bins[1:201], g_r[2], label="gas")
     plt.xlabel('r')
     plt.ylabel('g(r)')
-
+    plt.legend(handles=[liquid,solid,gas],loc=4)
+    plt.show()
+# Place a legend to the right of this smaller subplot.
+plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 def calculate_correlation_function(temp, dens): 
 
     cfg.temperature = temp
@@ -51,20 +56,19 @@ def calculate_correlation_function(temp, dens):
 
     g_r = calculate_pair_correlation_function(sep_hist, bins)
     print('the potential energy is {0},with error {1} the pressure is {2}, with error {3}'.format(average_pot_energy_particle ,error_pot_energy, average_p,error_p))
-    pair_correlation_plot(bins, g_r)
+#    pair_correlation_plot(bins, g_r)
 
-    return(g_r)
+    return(g_r, bins)
 
 temperature = np.array((1,0.5,3.0))
 pressure = np.array((0.8,1.2,0.3))
-
+g_r = np.zeros((3,200))
 for i in range(len(temperature)):
     temperature[i]
-    calculate_correlation_function(temperature[i],pressure[i])
+    g_r[i], bins = calculate_correlation_function(temperature[i],pressure[i])
 
 # creat output plots     
-
-plt.show()
+pair_correlation_plot(bins, g_r)
 
  # print results to terminal
 
