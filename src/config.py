@@ -2,9 +2,8 @@ import numpy as np
 
 # Chosen settings for simulation 
 dim = 3
-temperature = 119.8
-N_particle = 32
-
+N_particle = 108
+#density=N_particle/L**3
 density=0.80 #units of 1/sigma**3
 L = (N_particle/density)**(1/3)  # size of the box in units sigma 
 timestep = 10**-14
@@ -16,7 +15,7 @@ kb = 1.38*10**-23
 epsilon = 119.8*kb
 
 # Dimensionless variables
-temperature = temperature/119.8 # in units (epsilon/kb)
+temperature = 1 # in units (epsilon/kb)
 h = timestep/(m*sigma**2/epsilon)**.5 # dimensionless timestep
 total_equilibration_time = 10 # in units of [(m * sigma^2 / epsilon)^0.5]
 total_simulation_time = 20 # in units of [(m * sigma^2 / epsilon)^0.5]   
