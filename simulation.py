@@ -17,14 +17,14 @@ start = time.time()
 def energy_plot(kin_energy, pot_energy, total_energy):
     plt.figure()
 
-    plt.title('kinetic energy of all particles')
+    plt.title('energy per particle')
 
     plt.plot(simulation_time,kin_energy,label='kinetic energy')
     plt.plot(simulation_time,total_energy,label='total energy')
     plt.plot(simulation_time,pot_energy,label='potential energy')
 
     plt.xlabel('time (s)')
-    plt.ylabel('energy (joule)')
+    plt.ylabel('energy ($\epsilon$)')
     plt.grid(b=None, which='major', axis='both')
     plt.legend(loc='best')
 
@@ -48,6 +48,7 @@ def run_simulation(temp, dens, plots = True):
     cfg.temperature = temp
     cfg.density = dens
     cfg.L = (N_particle/density)**(1/3)  # size of the box in units sigma    
+
     # initialization
     (vel, pos, pot_energy, kin_energy, vir, sep_hist, t_current) = build_matrices()
 
@@ -92,5 +93,5 @@ def run_simulation(temp, dens, plots = True):
 if __name__ == "__main__":
     temp = 1.0
     dens = 0.8
-    run_simulation = (temp,dens)
-    plt.show
+    run_simulation(temp,dens)
+    plt.show()
