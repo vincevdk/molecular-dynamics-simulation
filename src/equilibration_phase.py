@@ -7,11 +7,43 @@ from src.config import *
 print(N_particle)
 
 def temperature_calculator(vel):
+    """ function which calculates the temperature of the system. The 
+    temperature is derived from the equipartition theorem
+    E_kinetic_energy = (N-1)*3/2*kb*T
+    
+    Parameters: 
+    ---------
+    vel: array of size (N_particle, 3)
+       The velocity of N particles in 3 dimensions. The first index of the
+       array corresponds to a particle.
+       
+    Results:
+    --------
+    temperature_current: float
+        Current temperature of the system
+    """
     temperature_current=np.sum(vel**2)*1/(3*(N_particle-1))
     return(temperature_current)
 
 def redistribute_velocity(vel,pos):
-    """
+    """Calculates scaling factor. After letting the system equilibrate for 
+    a while the kinetic energy is forced to a value corresponding to a certain 
+    temperature
+    
+    Parameters:
+    ---------
+    vel: array of size (N_particle, 3)
+       The velocity of N particles in 3 dimensions. The first index of the
+       array corresponds to a particle.
+    pos: array of size (N_particle, 3)
+       The positon of N particles in 3 dimensions. The first index of the
+       array corresponds to a particle.
+       
+    Results: 
+    --------
+    vel: array of size (N_particle, 3)
+       The velocity of N particles in 3 dimensions. The first index of the
+       array corresponds to a particle.
     """
     kinetic_energy = calculate_kinetic_energy(0, vel)
     rescaling_factor = ((N_particle - 1)*3/2*temperature/kinetic_energy)**.5
