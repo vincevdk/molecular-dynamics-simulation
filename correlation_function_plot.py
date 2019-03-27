@@ -12,6 +12,17 @@ from src import config as cfg
 from simulation import energy_plot
 
 def pair_correlation_plot(bins, g_r):
+    """ This function outputs a plot of the pair correlation function. 
+    
+    Parameters:
+    --------
+    bins:
+    g_r:
+    
+    Result:
+    -------
+    
+    """
     plt.figure()
     plt.title('pair correlation function')
     liquid, = plt.plot(bins[1:201], g_r[0], label="liquid" ) 
@@ -24,6 +35,20 @@ def pair_correlation_plot(bins, g_r):
 
 
 def calculate_correlation_function(temp, dens): 
+    
+    """ Calculation of the pair correlation function. It gives the probability, 
+    given a reference particle, to find another particle at a distance r.
+    
+    Parameters:
+    --------
+    temp: array 
+    dens: array
+    
+    Results: 
+    --------
+    g_r:
+    bins:
+    """
 
     cfg.temperature = temp
     cfg.density = dens
