@@ -2,7 +2,7 @@ import numpy as np
 
 # Chosen settings for simulation 
 dim = 3
-N_particle = 108
+N_particle = 32
 #density=N_particle/L**3
 density=0.80 #units of 1/sigma**3
 L = (N_particle/density)**(1/3)  # size of the box in units sigma 
