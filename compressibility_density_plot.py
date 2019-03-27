@@ -3,6 +3,16 @@ from simulation import *
 import matplotlib.pyplot as plt
 
 def compressibility_plot(density, compressibility):
+    """ Plots the compressibility for different densities
+    
+    Parameters: 
+    --------
+    density: array
+    
+    Result:
+    --------
+    plot of the density versus the compressibility
+    """
     plt.figure()
     plt.plot(density,compressibility[0])
     plt.plot(density,compressibility[1])
