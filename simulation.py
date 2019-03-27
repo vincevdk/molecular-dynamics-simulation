@@ -10,7 +10,7 @@ from src.initial_state import *
 from src.production_phase import *
 from src.equilibration_phase import *
 import time
-from src import config
+from src import config as cfg
 
 start = time.time()
 
@@ -43,13 +43,14 @@ def pressure_plot(p):
     plt.xlabel('time (s)')
     plt.ylabel('pressure')
 
+def run_simulation(temp, dens, plots = True):
 
-
-if __name__ == "__main__":
-
+    cfg.temperature = temp
+    cfg.density = dens
+    cfg.L = (N_particle/density)**(1/3)  # size of the box in units sigma    
     # initialization
-    (vel, pos, pot_energy, kin_energy, vir, sep_hist) = build_matrices()
-    pos_zero=pos
+    (vel, pos, pot_energy, kin_energy, vir, sep_hist, t_current) = build_matrices()
+
     vel, pos = initial_state(vel, pos)
     
     # equilibration phase
@@ -57,8 +58,8 @@ if __name__ == "__main__":
 
     # production phase
     (pot_energy, kin_energy, 
-     virial, sep_hist, bins) = calculate_time_evolution(vel, pos, pot_energy,
-                                                  kin_energy, vir, sep_hist)
+     virial, sep_hist, bins, temp) = calculate_time_evolution(vel, pos, pot_energy,
+                                                  kin_energy, vir, sep_hist, t_current)
 
     # data processing phase
     total_energy=calculate_total_energy(kin_energy,pot_energy)
@@ -75,15 +76,21 @@ if __name__ == "__main__":
     error_p = bootstrap(p,100,100)
     
     g_r = calculate_pair_correlation_function(sep_hist, bins)
-
     # creat output plots     
-    energy_plot(kin_energy/N_particle, pot_energy/N_particle, total_energy/N_particle)
-    pair_correlation_plot(bins, g_r)
-    pressure_plot(p)
-    plt.show()
-
+    if plots == True:
+        energy_plot(kin_energy/N_particle, pot_energy/N_particle, total_energy/N_particle)
+        pair_correlation_plot(bins, g_r)
+        pressure_plot(p)
+    
     # print results to terminal
     print('the potential energy is {0},with error {1} the pressure is {2}, with error {3}'.format(average_pot_energy_particle ,error_pot_energy, average_p,error_p))
 
     end = time.time()
     print("the total elapsed time is:",end - start)
+    return(g_r, average_p)
+
+if __name__ == "__main__":
+    temp = 1.0
+    dens = 0.8
+    run_simulation = (temp,dens)
+    plt.show

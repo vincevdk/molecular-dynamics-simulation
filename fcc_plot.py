@@ -6,7 +6,8 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 if __name__=="__main__":
-    pos = np.zeros(shape=(500, 3), dtype=float)
+    cfg.N_particle = 108
+    pos = np.zeros(shape=(cfg.N_particle, 3), dtype=float)
     pos = fcc_lattice(pos)
 
     fig = plt.figure()

@@ -105,6 +105,8 @@ def initial_state(vel, pos):
       array corresponds to a particle.
     """
     print(cfg.temperature,'temp')
+    print(cfg.N_particle,'particle')
+    
     energy = -np.log(np.random.rand(cfg.N_particle, cfg.dim)) * cfg.kb * cfg.temperature*119.8
     # inverting the probability function  to energy
     energy = energy * cfg.m / cfg.epsilon  # dimensionless

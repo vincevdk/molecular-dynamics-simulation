@@ -21,7 +21,6 @@ def calculate_pressure(vir):
 
     """    
     p = 1 - 1/(3* cfg.N_particle)*0.5*vir
-
     return(p)
 
 def calculate_pair_correlation_function(seperation_histogram,bins):
@@ -46,12 +45,8 @@ def calculate_pair_correlation_function(seperation_histogram,bins):
 
     """
     average_sep_histogram = np.mean(seperation_histogram, axis=0)
-#    average_sep_histogram = (np.sum(seperation_histogram, axis=0) \
-#                                 /len(cfg.simulation_time))
-    print(average_sep_histogram,'average_sep_histogram')
     pair_correlation_function = np.array(200)
     delta_r = bins[1]-bins[0]
-    print(delta_r)
     pair_correlation_function = (2 * cfg.L**3 * average_sep_histogram / (cfg.N_particle * (cfg.N_particle-1) * 4 * np.pi * bins[0:-1]**2 * delta_r))
 
     return(pair_correlation_function)
