@@ -15,6 +15,18 @@ from src import config as cfg
 start = time.time()
 
 def energy_plot(kin_energy, pot_energy, total_energy):
+    """ Plots kinetic energy, potential energy and total energy in a 
+    single plot
+
+    Parameters:
+    -----------
+    kin_energy: array of size Nt (number of simulation timesteps)
+        kinetic energy at each timestep
+    pot_energy: array of size Nt 
+        potential energy at each timestep
+    total_energy: array of size Nt 
+        total energy at each timestep
+    """
     plt.figure()
 
     plt.title('energy per particle')
@@ -30,6 +42,18 @@ def energy_plot(kin_energy, pot_energy, total_energy):
 
 
 def pair_correlation_plot(bins, g_r):
+    """ Creates a plot with on the y-axis the pair correlation function 
+    and on the x-axis the distance between particles
+
+    parameters:
+    ----------
+    bins: array of size 201
+        Contains the edges of the bins. The difference between two successive  
+        array elements is the size of each bin. Note that it can be a different
+        size then 201 (201 is the case in this program).
+    g_r: array of size 200
+        The pair correlation function
+    """
     plt.figure()
     plt.title('pair correlation function')
     plt.plot(bins[0:-1], g_r)
@@ -37,7 +61,12 @@ def pair_correlation_plot(bins, g_r):
     plt.ylabel('g(r)')
 
 
-def pressure_plot(p):
+def compressibility_plot(p):
+    """
+    Parameters:
+    -----------
+    p: array of Nt
+    """
     plt.figure()
     plt.plot(simulation_time,p)
     plt.xlabel('time (s)')
@@ -45,7 +74,19 @@ def pressure_plot(p):
 
 
 def run_simulation(temp, dens, N_par = 32, plots = True):
+    """ Runs the simulation in the following steps:
+    initialization -> equilibration -> production phase -> data processing ->
+    output results
 
+    Parameters:
+    -----------
+    temp: float
+    dens: float
+    N_par : int
+        optional input
+    plots: True or False
+        optional input
+    """
     cfg.temperature = temp
     cfg.density = dens
     cfg.N_particle = N_par
@@ -87,10 +128,10 @@ def run_simulation(temp, dens, N_par = 32, plots = True):
         energy_plot(kin_energy/N_particle, pot_energy/N_particle, 
                     total_energy/N_particle)
         pair_correlation_plot(bins, g_r)
-        pressure_plot(p)
+        compressibility_plot(p)
     
-    print('''the potential energy is {0}, with error {1} the pressure is {2}, 
-          with error {3}'''.format(average_pot_energy_particle,
+    print('''the potential energy is {0}, with error {1} the compressibility
+          is {2}, with error {3}'''.format(average_pot_energy_particle,
                                    error_pot_energy, average_p,error_p))
 
     end = time.time()

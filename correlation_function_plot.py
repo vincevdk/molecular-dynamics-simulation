@@ -16,12 +16,18 @@ def pair_correlation_plot(bins, g_r):
     
     Parameters:
     --------
-    bins:
-    g_r:
-    
+    bins: array of size 201
+       Contains the edges of the bins. The difference between two successive  
+       array elements is the size of each bin
+    g_r: array of size (3,200)
+       the pair correlation function defined as: 
+       (2 V ⟨n(r)⟩) / (N(N-1) 4 pi r**2 delta r) 
+       for three different input combinations of pressure and temperature
+     
     Result:
     -------
-    
+    Outputs the correlation function for three input combinations of pressure 
+    and temperature
     """
     plt.figure()
     plt.title('pair correlation function')
@@ -35,9 +41,9 @@ def pair_correlation_plot(bins, g_r):
 
 
 def calculate_correlation_function(temp, dens): 
-    
-    """ Calculation of the pair correlation function. It gives the probability, 
-    given a reference particle, to find another particle at a distance r.
+    """ Calculation of the pair correlation function. It gives the 
+    probability, given a reference particle, to find another particle at a 
+    distance r. This function is similair to 
     
     Parameters:
     --------
@@ -59,6 +65,7 @@ def calculate_correlation_function(temp, dens):
         cfg.h = 0.0002
         cfg.equilibration_time = np.arange(0, 30, 0.0002)
         cfg.simulation_time = np.arange(0, 20, cfg.h)
+    
     else: 
         cfg.h = 0.002
         cfg.equilibration_time = np.arange(0, 20, 0.002)
