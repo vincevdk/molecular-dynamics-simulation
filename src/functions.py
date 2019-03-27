@@ -140,6 +140,19 @@ def calculate_kinetic_energy(kinetic_energy, vel):
 
 
 def calculate_total_energy(kin_energy, pot_energy):
+    """" Calculates the total energy of the system
+    total energy = kinetic energy + potential energy
+    
+    Parameters:
+    ---------
+    kinetic energy: float
+        kinetic energy of the system
+    potential energy: float
+        potential energy of the system
+    Results:
+    ---------
+    total_energy: float
+    """
     total_energy = kin_energy + pot_energy
     return(total_energy)
 
@@ -152,11 +165,11 @@ def virial_theorem(pos):
        The positon of N particles in 3 dimensions. The first index of the      
        array corresponds to a particle. 
     Results:
+    --------
     vir: array of size len(simulation_time)                                    
        the virial is defined as: <0.5 Sum_(i,j) (r_(i,j) dU/dr_(ij))>          
        where the sum is over i,j, i.e all particle pairs. r_(ij) is the        
        distance between a pair of particles 
-    --------
     """
     min_dis, min_dir = calculate_minimal_distance_and_direction(pos)
     vir = ma.array(
