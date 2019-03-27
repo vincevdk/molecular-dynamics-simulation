@@ -4,8 +4,8 @@ import numpy.ma as ma
 from src import config as cfg
 
 def calculate_compressibility(vir):
-    """" Calculates the compressibility
-    
+    """" Calculates the compressibility factor given using the virial:
+        
     Parameters:
     -----------
     vir: array of size Nt
@@ -15,13 +15,12 @@ def calculate_compressibility(vir):
 
     Results:
     --------
-
-    p: array of size Nt
-       compressibility of the system at each timestep
+    compressibility: array of size Nt
 
     """    
-    p = 1 - 1/(3* cfg.N_particle)*0.5*vir
-    return(p)
+    compressibility = 1 - 1/(3* cfg.N_particle)*0.5*vir
+    return(compressibility)
+
 
 def calculate_pair_correlation_function(seperation_histogram,bins):
     """ Calculates the pair correlation function using a histogram of 
@@ -47,7 +46,9 @@ def calculate_pair_correlation_function(seperation_histogram,bins):
     average_sep_histogram = np.mean(seperation_histogram, axis=0)
     pair_correlation_function = np.array(200)
     delta_r = bins[1]-bins[0]
-    pair_correlation_function = (2 * cfg.L**3 * average_sep_histogram / (cfg.N_particle * (cfg.N_particle-1) * 4 * np.pi * bins[0:-1]**2 * delta_r))
+    pair_correlation_function = (2 * cfg.L**3 * average_sep_histogram / 
+                                (cfg.N_particle * (cfg.N_particle-1) 
+                                 * 4 * np.pi * bins[0:-1]**2 * delta_r))
 
     return(pair_correlation_function)
 
@@ -69,7 +70,7 @@ def time_average(calculated_variable):
     return(average_of_variable)
 
 
-def bootstrap(N_data_points, n_iterations, set_size):
+def bootstrap(N_data_points, n_iterations):
     """ Calculates the error using the bootstrap method. From N data points 
     a new random set is chosen by drawing "set_size" random data points from 
     the  original set, where a single point can be chosen several times. From 
@@ -86,8 +87,6 @@ def bootstrap(N_data_points, n_iterations, set_size):
         computed. For the bootstrapping to work correctly, n_iterations 
         should be large enough such that the calculated error does not 
         change when further increasing n_iterations. 
-    set_size: int
-        the size of the random set chosen at each iteration.
 
     Results:                                      
     --------  
@@ -95,14 +94,14 @@ def bootstrap(N_data_points, n_iterations, set_size):
        calculated using the following formula σA​= (⟨A**2⟩−⟨A⟩**2)**0.5
     """
 
-    random_set = select_random_set(N_data_points, n_iterations, set_size)
-    average_random_set = np.sum(random_set, axis = 1)/set_size
+    random_set = select_random_set(N_data_points, n_iterations)
+    average_random_set = np.sum(random_set, axis = 1)/len(N_data_points)
     standard_deviation = calculate_standard_deviation(average_random_set,
                                                       n_iterations)
     return(standard_deviation)
 
 
-def select_random_set(data_points, n_iterations, set_size):
+def select_random_set(data_points, n_iterations):
     """ Chooses a random set from  N data points of size : "set_size" where 
     a single point can be chosen several times. Does this "n_iterations" 
     times.
@@ -111,29 +110,30 @@ def select_random_set(data_points, n_iterations, set_size):
     -----------
     date_points: array of size Nt
        Note that the function works for any array size.
-    n_iterations: float
-    set_size:
+    n_iterations: int
+       Number of times a random set should be chosen
 
     Results:
     --------
     random_data_points: array of size (n_iteaterations, set_size)
     """
-
     random_data_points = np.random.choice(data_points, 
-                                          size = (n_iterations, set_size))
+                                          size = (n_iterations, 
+                                                  len(data_points)))
     return(random_data_points)
 
 def calculate_standard_deviation(average_random_set, n_iterations):
     """
     Parameters:
     -----------
-    average_random_set:
-       
-    n_iterations:
+    average_random_set:float
+    n_iterations: int
+         number of times a random data set is chosen and the average is 
+         computed.
     Results:
     --------
     standard_deviation: float
-       σA​=⟨A**2⟩−⟨A⟩**2 
+       calculated from an array of values of A as: σA​=(⟨A**2⟩−⟨A⟩**2)**0.5
     """
 
     standard_deviation = (np.sum(average_random_set**2)/n_iterations 

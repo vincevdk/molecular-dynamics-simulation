@@ -43,14 +43,17 @@ def pressure_plot(p):
     plt.xlabel('time (s)')
     plt.ylabel('pressure')
 
-def run_simulation(temp, dens, plots = True):
+
+def run_simulation(temp, dens, N_par = 32, plots = True):
 
     cfg.temperature = temp
     cfg.density = dens
+    cfg.N_particle = N_par
     cfg.L = (N_particle/density)**(1/3)  # size of the box in units sigma    
 
     # initialization
-    (vel, pos, pot_energy, kin_energy, vir, sep_hist, t_current) = build_matrices()
+    (vel, pos, pot_energy, kin_energy, 
+     vir, sep_hist, t_current) = build_matrices()
 
     vel, pos = initial_state(vel, pos)
     
@@ -58,9 +61,10 @@ def run_simulation(temp, dens, plots = True):
     pos, vel = equilibrate(vel,pos)
 
     # production phase
-    (pot_energy, kin_energy, 
-     virial, sep_hist, bins, temp) = calculate_time_evolution(vel, pos, pot_energy,
-                                                  kin_energy, vir, sep_hist, t_current)
+    (pot_energy, kin_energy, virial, 
+     sep_hist, bins, temp) = calculate_time_evolution(vel, pos, pot_energy,
+                                                      kin_energy, vir, 
+                                                      sep_hist, t_current)
 
     # data processing phase
     total_energy=calculate_total_energy(kin_energy,pot_energy)
@@ -70,28 +74,35 @@ def run_simulation(temp, dens, plots = True):
     average_total_energy_particle = time_average(total_energy/N_particle)
 
 
-    error_pot_energy = bootstrap(pot_energy/N_particle,100,100)
+    error_pot_energy = bootstrap(pot_energy/N_particle,100)
 
     p = calculate_compressibility(virial)
     average_p = time_average(p)
-    error_p = bootstrap(p,100,100)
+    error_p = bootstrap(p,100)
     
     g_r = calculate_pair_correlation_function(sep_hist, bins)
-    # creat output plots     
+
+    # output results
     if plots == True:
-        energy_plot(kin_energy/N_particle, pot_energy/N_particle, total_energy/N_particle)
+        energy_plot(kin_energy/N_particle, pot_energy/N_particle, 
+                    total_energy/N_particle)
         pair_correlation_plot(bins, g_r)
         pressure_plot(p)
     
-    # print results to terminal
-    print('the potential energy is {0},with error {1} the pressure is {2}, with error {3}'.format(average_pot_energy_particle ,error_pot_energy, average_p,error_p))
+    print('''the potential energy is {0}, with error {1} the pressure is {2}, 
+          with error {3}'''.format(average_pot_energy_particle,
+                                   error_pot_energy, average_p,error_p))
 
     end = time.time()
     print("the total elapsed time is:",end - start)
     return(g_r, average_p)
 
+
 if __name__ == "__main__":
+    # input is given here
     temp = 1.0
     dens = 0.8
-    run_simulation(temp,dens)
+    N_particle = 32
+    
+    run_simulation(temp, dens, N_particle)
     plt.show()

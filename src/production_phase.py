@@ -8,8 +8,9 @@ from src.functions import *
 from src.equilibration_phase import*
 
 def calculate_time_evolution(vel, pos, potential_energy,
-                             kinetic_energy, vir, seperation_histogram, t_current):
-    """Uses velocity verlet
+                             kinetic_energy, vir, 
+                             seperation_histogram, t_current):
+    """Uses velocity verlet to calculate the time evolution of the system.
 
     Parameters:
     -----------
@@ -63,4 +64,5 @@ def calculate_time_evolution(vel, pos, potential_energy,
                                                   bins)  
         t_current[v] = temperature_calculator(vel)
 
-    return(potential_energy, kinetic_energy, vir, seperation_histogram, bins, t_current )
+    return(potential_energy, kinetic_energy, vir, 
+           seperation_histogram, bins, t_current)

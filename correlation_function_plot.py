@@ -42,6 +42,7 @@ def calculate_correlation_function(temp, dens):
     Parameters:
     --------
     temp: array 
+        input temperature for
     dens: array
     
     Results: 
@@ -72,9 +73,10 @@ def calculate_correlation_function(temp, dens):
     pos, vel = equilibrate(vel,pos)
 
     # production phase
-    (pot_energy, kin_energy, 
-     virial, sep_hist, bins, temp) = calculate_time_evolution(vel, pos, pot_energy,
-                                                  kin_energy, vir, sep_hist,temp)
+    (pot_energy, kin_energy, virial, 
+     sep_hist, bins, temp) = calculate_time_evolution(vel, pos, pot_energy,
+                                                      kin_energy, vir, 
+                                                      sep_hist,temp)
     # data processing phase
     total_energy=calculate_total_energy(kin_energy,pot_energy)
     
@@ -82,15 +84,13 @@ def calculate_correlation_function(temp, dens):
     average_pot_energy_particle = time_average(pot_energy/N_particle)
     average_total_energy_particle = time_average(total_energy/N_particle)
 
-    error_pot_energy = bootstrap(pot_energy/N_particle,100,100)
+    error_pot_energy = bootstrap(pot_energy/N_particle,100)
 
-    p = calculate_pressure(virial)
+    p = calculate_compressibility(virial)
     average_p = time_average(p)
-    error_p = bootstrap(p,100,100)
+    error_p = bootstrap(p,100)
 
     g_r = calculate_pair_correlation_function(sep_hist, bins)
-    print('the potential energy is {0},with error {1} the pressure is {2}, with error {3}'.format(average_pot_energy_particle ,error_pot_energy, average_p,error_p))
-    energy_plot(kin_energy/N_particle, pot_energy/N_particle, total_energy/N_particle)
     return(g_r, bins)
 
 temperature = np.array((1.0,0.5,3.0))

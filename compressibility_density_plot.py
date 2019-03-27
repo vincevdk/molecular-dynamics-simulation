@@ -1,5 +1,5 @@
 import numpy as np
-from simulation import *
+from ..simulation import *
 import matplotlib.pyplot as plt
 
 def compressibility_plot(density, compressibility):

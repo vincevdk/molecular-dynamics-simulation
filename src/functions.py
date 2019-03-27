@@ -142,9 +142,8 @@ def calculate_kinetic_energy(kinetic_energy, vel):
 def calculate_total_energy(kin_energy, pot_energy):
     """" Calculates the total energy of the system
     total energy = kinetic energy + potential energy
-    
     Parameters:
-    ---------
+    -----------
     kinetic energy: float
         kinetic energy of the system
     potential energy: float
