@@ -70,12 +70,9 @@ def fcc_lattice(pos_at_0):
         distance_between_particles,
         cfg.L + distance_between_particles / 2,
         distance_between_particles)
-    pos_at_0[int(number_of_boxes):2 * int(cfg.N_particle / 4)] 
-             = np.array(np.meshgrid(x, y, y)).T.reshape(-1, 3)
-    pos_at_0[2 * int(cfg.N_particle / 4):3 * int(cfg.N_particle / 4)] 
-             = np.array(np.meshgrid(y, y, x)).T.reshape(-1, 3)
-    pos_at_0[3 * int(cfg.N_particle / 4):cfg.N_particle] 
-             = np.array(np.meshgrid(y, x, y)).T.reshape(-1, 3)
+    pos_at_0[int(number_of_boxes):2 * int(cfg.N_particle / 4)] = np.array(np.meshgrid(x, y, y)).T.reshape(-1, 3)
+    pos_at_0[2 * int(cfg.N_particle / 4):3 * int(cfg.N_particle / 4)] = np.array(np.meshgrid(y, y, x)).T.reshape(-1, 3)
+    pos_at_0[3 * int(cfg.N_particle / 4):cfg.N_particle] = np.array(np.meshgrid(y, x, y)).T.reshape(-1, 3)
 
     return(pos_at_0)
 
