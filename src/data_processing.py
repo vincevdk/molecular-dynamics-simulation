@@ -3,8 +3,8 @@ import numpy.ma as ma
 
 from src import config as cfg
 
-def calculate_pressure(vir):
-    """" Calculates the pressure devided by kb*T*rho
+def calculate_compressibility(vir):
+    """" Calculates the compressibility
     
     Parameters:
     -----------
@@ -17,7 +17,7 @@ def calculate_pressure(vir):
     --------
 
     p: array of size Nt
-       pressure of the system at each timestep
+       compressibility of the system at each timestep
 
     """    
     p = 1 - 1/(3* cfg.N_particle)*0.5*vir

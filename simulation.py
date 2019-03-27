@@ -72,7 +72,7 @@ def run_simulation(temp, dens, plots = True):
 
     error_pot_energy = bootstrap(pot_energy/N_particle,100,100)
 
-    p = calculate_pressure(virial)
+    p = calculate_compressibility(virial)
     average_p = time_average(p)
     error_p = bootstrap(p,100,100)
     
